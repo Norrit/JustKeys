@@ -7,17 +7,17 @@
   var justKeysHighlightNumberClass = "justKeysHighlightNumber";
   var h = JustKeysHelper;
 
+  // Object to hold the currently highlighted elements and the filter pattern
   var Highlight = function (elements) {
     var text = "";
     return {
-      getFilter: function() {
-        return text;
-      },
       addToFilter: function(character) {
         text += character;
+        console.log(text, "->", this.count());
       },  
       removeLastFromFilter: function() {
         text = text.substring(0, text.length-1);
+        console.log(text, "->", this.count());
       },
       filter: function() {
         var selection = {};
@@ -34,19 +34,21 @@
       }
     }
   };
+  var highlights;
+
 
   //
   // Display Functions
   //
   
-  function resetHighlightedLinks() {
+  function resetHighlightedElements() {
     var elements = document.getElementsByClassName(justKeysHighlightClass);
     while(elements.length > 0) {
       h.removeClass(elements[0], justKeysHighlightClass);
     }
     elements = document.getElementsByClassName(justKeysHighlightNumberClass);
     while(elements.length > 0) {
-      elements[0].parentNode.removeChild(elements[0]);
+      h.remove(elements[0]);
     }
   }
 
@@ -54,7 +56,19 @@
     return h.hasLink(element) && h.elementInViewport(element) && h.isVisible(element);
   }
 
-  function highlightLink(element, text) {
+  function loadHighlightableElements() {
+    var elements = document.getElementsByTagName("a");
+    var highlightable = {};
+    var number = 1;
+    for (var i = 0; i < elements.length; i++) {
+      if (shouldHighlight(elements[i])) {
+        highlightable[number++] = elements[i];
+      }
+    }
+    return highlightable;
+  }
+
+  function highlightElement(element, text) {
     var label = document.createElement("span");
     label.innerText = text;
     h.addClass(label, justKeysHighlightNumberClass);
@@ -62,37 +76,32 @@
     h.insertAsFirst(element, label);
   }
 
-  function highlightLinks() {
-    var elements = document.getElementsByTagName("a");
-    var highlights = {};
-    var number = 1;
-    for (var i = 0; i < elements.length; i++) {
-      var element = elements[i];
-      if (shouldHighlight(element)) {
-        highlightLink(element, number);
-        highlights[number] = element;
-        number++;
-      }
+  function highlightElements() {
+    var elements = loadHighlightableElements();
+    for (var i in elements) {
+      highlightElement(elements[i], i);
     }
-    return highlights;
+    highlights = new Highlight(elements);
   }
 
-  function bindSelectionKeys(highlights) {
-    bindKeys("backspace", function() { highlights.removeLastFromFilter(); console.log(highlights.getFilter(), "->", highlights.count());;});
+  function bindSelectionKeys() {
+    bindKeys("backspace", function() { highlights.removeLastFromFilter(); });
     for (var i = 0; i < 10; i++) {
-      bindNumKey(highlights, i.toString());
+      (function (index) {
+        bindKeys(index, function() { highlights.addToFilter(index)});
+      })(i.toString());
     }
   }
 
-  function bindNumKey(highlights, key) {
-    bindKeys(key, function() { highlights.addToFilter(key); console.log(highlights.getFilter(), "->", highlights.count()); });
-  }
+
+  //
+  // Bound functions
+  //
 
   function initFollowLink() {
-    resetHighlightedLinks();
-    var elements = highlightLinks();    
-    highlights = new Highlight(elements);
-    bindSelectionKeys(highlights);
+    resetHighlightedElements();
+    highlightElements();    
+    bindSelectionKeys();
   }
 
 

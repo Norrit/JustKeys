@@ -63,7 +63,11 @@
         parent.appendChild(element);
       }
     },
-    
+  
+    remove: function(element) {
+      element.parentNode.removeChild(element); 
+    },
+  
     hasLink: function(element) {
       return element.href && element.href != "" && element.href != "#";
     }
