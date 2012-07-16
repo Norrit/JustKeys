@@ -38,12 +38,6 @@
   //
   // Display Functions
   //
-  function showTabs() {
-    request("tabs", function(response) {
-      // TODO: Implement this stuff ...
-      console.log("Tabs", response);
-    });    
-  }
   
   function resetHighlightedLinks() {
     var elements = document.getElementsByClassName(justKeysHighlightClass);
