@@ -1,16 +1,24 @@
 (function() {
-  
-  // TODO: Load keybindings from preferences
-  var KEYBINDINGS = {showTabs: "ctrl+b"};
-  
-  // Reply Functions
-  function _replyKeybindings(request, sender, response) {
-    response(KEYBINDINGS);
-  };
 
-  function _replyTabs(request, sender, response) {
-    //chrome query directly sends the response
-    chrome.tabs.query({currentWindow: true}, response);
+  //
+  // Actions.
+  // All actions defined here can be invoked by the frontend.
+  //
+  var actions = {
+
+    keybindings: function(request, sender, response) {
+      // TODO: Load keybindings from preferences
+      // One Place to define action name, keybinding and the name of the
+      // function to execute
+      var bindings = {showTabs: {keys: "ctrl+c b", fn: "showTabs"}}; 
+      response(bindings);
+    },
+
+    tabs: function(request, sender, response) {
+      // chrome query directly uses the response function to send back
+      // the response
+      chrome.tabs.query({currentWindow: true}, response);
+    }
   };
   
   var justKeys = {
@@ -21,13 +29,9 @@
      * {action: "Name of the action" [, <extra option properties if needed>]}
      */
     dispatch: function(request, sender, response) {
-      switch(request.action) {
-      case "keybindings":
-        _replyKeybindings(request, sender, response);
-        break;
-      case "tabs":
-        _replyTabs(request, sender, response);
-        break;
+      var action = actions[request.action];
+      if (action) {
+        action(request, sender, response);
       }
     }
   };
