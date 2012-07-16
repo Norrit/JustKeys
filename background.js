@@ -11,7 +11,7 @@
       // One Place to define action name, keybinding and the name of the
       // function to execute
       var bindings = {showTabs: {keys: "ctrl+c b", fn: "showTabs"},
-                      highlightLinks: {keys: "f", fn: "highlightLinks"}}; 
+                      followLink: {keys: "f", fn: "initFollowLink"}}; 
       response(bindings);
     },
 
