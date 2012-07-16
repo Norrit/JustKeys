@@ -1,1 +1,13 @@
 /* Content Script CSS */
+
+.justKeysHighlight {
+    background-color: yellow;
+    color: blue;
+}
+
+.justKeysHighlightNumber {
+    border: 1px solid black;
+    background: red;
+    color: white;
+    font: 0.8em cursive;
+}
