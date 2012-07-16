@@ -5,6 +5,7 @@
   //
   var justKeysHighlightClass = "justKeysHighlight";
   var justKeysHighlightNumberClass = "justKeysHighlightNumber";
+  var h = JustKeysHelper;
 
   //
   // Display Functions
@@ -19,7 +20,7 @@
   function resetHighlightedLinks() {
     var elements = document.getElementsByClassName(justKeysHighlightClass);
     while(elements.length > 0) {
-      JustKeysHelper.removeClass(elements[0], justKeysHighlightClass);
+      h.removeClass(elements[0], justKeysHighlightClass);
     }
     elements = document.getElementsByClassName(justKeysHighlightNumberClass);
     while(elements.length > 0) {
@@ -28,17 +29,17 @@
   }
 
   function shouldHighlight(element) {
-    return JustKeysHelper.elementInViewport(element) 
-      && JustKeysHelper.isVisible(element) 
-      && JustKeysHelper.hasLink(element);
+    return h.elementInViewport(element) 
+      && h.isVisible(element) 
+      && h.hasLink(element);
   }
 
   function highlightLink(element, text) {
     var label = document.createElement("span");
     label.innerText = text;
-    JustKeysHelper.addClass(label, justKeysHighlightNumberClass);
-    JustKeysHelper.addClass(element, justKeysHighlightClass);
-    JustKeysHelper.insertAsFirst(element, label);
+    h.addClass(label, justKeysHighlightNumberClass);
+    h.addClass(element, justKeysHighlightClass);
+    h.insertAsFirst(element, label);
   }
 
   function highlightLinks() {

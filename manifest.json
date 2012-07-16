@@ -21,7 +21,7 @@
         "https://*/*"
       ],
       "css": ["contentscript.css"],
-      "js": ["mousetrap.min.js", "contentscript.js", "helper.js"],
+      "js": ["mousetrap.min.js", "helper.js", "contentscript.js"],
       "run_at": "document_idle",
       "all_frames": false
     }
