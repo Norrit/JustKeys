@@ -14,15 +14,16 @@
   "background": { 
     "page": "background.html"
   },
-  "content_scripts" : [
+  "content_scripts": [
     {
-      "matches" : [
+      "matches": [
         "http://*/*",
         "https://*/*"
       ],
-      "js" : ["mousetrap.min.js", "contentscript.js"],
-      "run_at" : "document_idle",
-      "all_frames" : false
+      "css": ["contentscript.css"],
+      "js": ["mousetrap.min.js", "contentscript.js"],
+      "run_at": "document_idle",
+      "all_frames": false
     }
   ],
   "permissions": [
