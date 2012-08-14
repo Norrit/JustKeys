@@ -1,133 +1,134 @@
-(function() {
+(function () {
 
-  //
-  // Constants
-  //
-  var justKeysHighlightClass = "justKeysHighlight";
-  var justKeysHighlightNumberClass = "justKeysHighlightNumber";
-  var h = JustKeysHelper;
+    var justKeysHighlightClass = "justKeysHighlight";
+    var justKeysHighlightNumberClass = "justKeysHighlightNumber";
+    var $h = JustKeysHelper;
 
-  // Object to hold the currently highlighted elements and the filter pattern
-  var Highlight = function (elements) {
-    var text = "";
-    return {
-      addToFilter: function(character) {
-        text += character;
-        console.log(text, "->", this.count());
-      },  
-      removeLastFromFilter: function() {
-        text = text.substring(0, text.length-1);
-        console.log(text, "->", this.count());
-      },
-      filter: function() {
-        var selection = {};
-        for (var i in elements) {
-          if (i.toString().indexOf(text) == 0) { 
-            console.log("Match ", text, "->", i.toString());
-            selection[i] = elements[i];
-          }
+    // Object to hold the currently highlighted elements and the filter pattern
+    var Highlight = function (elements) {
+        var text = "";
+        return {
+            addToFilter: function (character) {
+                text += character;
+                console.log(text, "->", this.count());
+            },
+            removeLastFromFilter: function () {
+                text = text.substring(0, text.length - 1);
+                console.log(text, "->", this.count());
+            },
+            filter: function () {
+                var selection = {};
+                for (var i in elements) {
+                    if (i.toString().indexOf(text) === 0) {
+                        console.log("Match ", text, "->", i.toString());
+                        selection[i] = elements[i];
+                    }
+                }
+                return selection;
+            },
+            count: function () {
+                return Object.keys(this.filter()).length;
+            }
+        };
+    };
+    var highlights;
+
+
+    //
+    // Display Functions
+    //
+
+    function resetHighlightedElements() {
+        var elements = document.getElementsByClassName(justKeysHighlightClass);
+        while (elements.length > 0) {
+            $h.removeClass(elements[0], justKeysHighlightClass);
         }
-        return selection;
-      }, 
-      count: function() {
-        return Object.keys(this.filter()).length;
-      }
+        elements = document.getElementsByClassName(justKeysHighlightNumberClass);
+        while (elements.length > 0) {
+            $h.remove(elements[0]);
+        }
     }
-  };
-  var highlights;
 
-
-  //
-  // Display Functions
-  //
-  
-  function resetHighlightedElements() {
-    var elements = document.getElementsByClassName(justKeysHighlightClass);
-    while(elements.length > 0) {
-      h.removeClass(elements[0], justKeysHighlightClass);
+    function shouldHighlight(element) {
+        return $h.hasLink(element) && $h.elementInViewport(element) && $h.isVisible(element);
     }
-    elements = document.getElementsByClassName(justKeysHighlightNumberClass);
-    while(elements.length > 0) {
-      h.remove(elements[0]);
+
+    function loadHighlightableElements() {
+        var elements = document.getElementsByTagName("a");
+        var highlightable = {};
+        var number = 1;
+        for (var i = 0; i < elements.length; i++) {
+            if (shouldHighlight(elements[i])) {
+                highlightable[number++] = elements[i];
+            }
+        }
+        return highlightable;
     }
-  }
 
-  function shouldHighlight(element) {
-    return h.hasLink(element) && h.elementInViewport(element) && h.isVisible(element);
-  }
-
-  function loadHighlightableElements() {
-    var elements = document.getElementsByTagName("a");
-    var highlightable = {};
-    var number = 1;
-    for (var i = 0; i < elements.length; i++) {
-      if (shouldHighlight(elements[i])) {
-        highlightable[number++] = elements[i];
-      }
+    function highlightElement(element, text) {
+        var label = document.createElement("span");
+        label.innerText = text;
+        $h.addClass(label, justKeysHighlightNumberClass);
+        $h.addClass(element, justKeysHighlightClass);
+        $h.insertAsFirst(element, label);
     }
-    return highlightable;
-  }
 
-  function highlightElement(element, text) {
-    var label = document.createElement("span");
-    label.innerText = text;
-    h.addClass(label, justKeysHighlightNumberClass);
-    h.addClass(element, justKeysHighlightClass);
-    h.insertAsFirst(element, label);
-  }
-
-  function highlightElements() {
-    var elements = loadHighlightableElements();
-    for (var i in elements) {
-      highlightElement(elements[i], i);
+    function highlightElements() {
+        var elements = loadHighlightableElements();
+        for (var i in elements) {
+            highlightElement(elements[i], i);
+        }
+        highlights = new Highlight(elements);
     }
-    highlights = new Highlight(elements);
-  }
 
-  function bindSelectionKeys() {
-    bindKeys("backspace", function() { highlights.removeLastFromFilter(); });
-    for (var i = 0; i < 10; i++) {
-      (function (index) {
-        bindKeys(index, function() { highlights.addToFilter(index)});
-      })(i.toString());
+    function bindSelectionKeys() {
+        bindKeys("backspace", function () {
+            highlights.removeLastFromFilter();
+        });
+        for (var i = 0; i < 10; i++) {
+            (function (index) {
+                bindKeys(index, function () {
+                    highlights.addToFilter(index)
+                });
+            })(i.toString());
+        }
     }
-  }
 
 
-  //
-  // Bound functions
-  //
+    //
+    // Bound functions
+    //
 
-  function initFollowLink() {
-    resetHighlightedElements();
-    highlightElements();    
-    bindSelectionKeys();
-  }
-
-
-  // Function to hide the chrome module
-  function request(action, callback) {
-    chrome.extension.sendRequest({action: action}, callback);
-  }
-  
-  // Function to hide Mousetrap.js
-  function bindKeys(keys, fn) {
-    Mousetrap.bind(keys, fn);
-  }
-
-  //
-  // Setup. 
-  // Hook all keybindings into the current site.
-  //
-  request("keybindings", function(keybindings) {
-    for(var prop in keybindings) {
-      var keybinding = keybindings[prop];
-      // eval is dangerous ... but should be fine here because no user
-      // input is evaluated. Somehow invokeing the functions by scope
-      // doesnt work.
-      console.log("Register Binding:", keybinding);
-      bindKeys(keybinding.keys, eval(keybinding.fn));
+    function initFollowLink() {
+        resetHighlightedElements();
+        highlightElements();
+        bindSelectionKeys();
     }
-  });
-  
-}) ();
+
+
+    // Function to hide the chrome module
+    function request(action, callback) {
+        chrome.extension.sendRequest({action: action}, callback);
+    }
+
+    // Function to hide Mousetrap.js
+    function bindKeys(keys, fn) {
+        Mousetrap.bind(keys, fn);
+    }
+
+    //
+    // Setup.
+    // Hook all keybindings into the current site.
+    //
+    request("keybindings", function (keybindings) {
+        for (var prop in keybindings) {
+            var keybinding = keybindings[prop];
+            // eval is dangerous ... but should be fine here because no user
+            // input is evaluated. Somehow invoking the functions by scope
+            // doesn't work.
+            console.log("Register Binding:", keybinding);
+            bindKeys(keybinding.keys, eval(keybinding.fn));
+        }
+    });
+
+})();
