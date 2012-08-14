@@ -2,6 +2,8 @@
 
     var justKeysHighlightClass = "justKeysHighlight";
     var justKeysHighlightNumberClass = "justKeysHighlightNumber";
+    var justKeysFilteredClass = "justKeysFiltered";
+    var justKeysFilteredNumberClass = "justKeysFilteredNumber";
     var $h = JustKeysHelper;
 
     // Object to hold the currently highlighted elements and the filter pattern
@@ -39,14 +41,10 @@
     //
 
     function resetHighlightedElements() {
-        var elements = document.getElementsByClassName(justKeysHighlightClass);
-        while (elements.length > 0) {
-            $h.removeClass(elements[0], justKeysHighlightClass);
-        }
-        elements = document.getElementsByClassName(justKeysHighlightNumberClass);
-        while (elements.length > 0) {
-            $h.remove(elements[0]);
-        }
+        $h.removeClassFromAllElements(justKeysHighlightClass);
+        $h.removeClassFromAllElements(justKeysFilteredClass);
+        $h.removeElementsWithClass(justKeysHighlightNumberClass);
+        $h.removeElementsWithClass(justKeysFilteredNumberClass);
     }
 
     function shouldHighlight(element) {

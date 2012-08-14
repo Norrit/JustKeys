@@ -68,6 +68,20 @@
             element.parentNode.removeChild(element);
         },
 
+        removeClassFromAllElements: function (className) {
+            var elements = document.getElementsByClassName(className);
+            while (elements.length > 0) {
+                this.removeClass(elements[0], className);
+            }
+        },
+
+        removeElementsWithClass: function(className) {
+            var elements = document.getElementsByClassName(className);
+            while (elements.length > 0) {
+                this.remove(elements[0]);
+            }
+        },
+
         hasLink: function (element) {
             return element.href && element.href !== "" && element.href !== "#";
         }
