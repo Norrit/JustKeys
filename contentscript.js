@@ -6,39 +6,26 @@
     var justKeysFilteredNumberClass = "justKeysFilteredNumber";
     var $h = JustKeysHelper;
 
-    // Object to hold the currently highlighted elements and the filter pattern
-    var Highlight = function (elements) {
-        var text = "";
-        return {
-            addToFilter: function (character) {
-                text += character;
-                console.log(text, "->", this.count());
-            },
-            removeLastFromFilter: function () {
-                text = text.substring(0, text.length - 1);
-                console.log(text, "->", this.count());
-            },
-            filter: function () {
-                var selection = {};
-                for (var i in elements) {
-                    if (i.toString().indexOf(text) === 0) {
-                        console.log("Match ", text, "->", i.toString());
-                        selection[i] = elements[i];
-                    }
-                }
-                return selection;
-            },
-            count: function () {
-                return Object.keys(this.filter()).length;
-            }
-        };
-    };
     var highlights;
-
+    var text = "";
 
     //
     // Display Functions
     //
+
+    function filteredElements() {
+        var selection = {};
+        for (var i in highlights) {
+            if (i.toString().indexOf(text) === 0) {
+                selection[i] = highlights[i];
+            }
+        }
+        return selection;
+    }
+
+    function countFilteredElements() {
+        return Object.keys(filteredElements()).length;
+    }
 
     function resetHighlightedElements() {
         highlights = null;
@@ -73,28 +60,26 @@
     }
 
     function highlightElements() {
-        var elements = loadHighlightableElements();
-        for (var i in elements) {
-            highlightElement(elements[i], i);
+        for (var i in highlights) {
+            highlightElement(highlights[i], i);
         }
-        highlights = new Highlight(elements);
     }
 
     function bindSelectionKeys() {
-        bindKeys("backspace", function () {
-            highlights.removeLastFromFilter();
-        });
         bindKeys("esc", function () {
             resetHighlightedElements();
         });
+        bindKeys("backspace", function () {
+            text = text.substring(0, text.length - 1);
+        });
         for (var i = 0; i < 10; i++) {
-            selectionKey(i.toString());
+            binSelectionNumberKey(i.toString());
         }
     }
 
-    function selectionKey(index) {
+    function binSelectionNumberKey(index) {
         bindKeys(index, function () {
-            highlights.addToFilter(index)
+            text += index;
         });
     }
 
@@ -105,6 +90,7 @@
 
     function initFollowLink() {
         resetHighlightedElements();
+        highlights = loadHighlightableElements();
         highlightElements();
         bindSelectionKeys();
     }
