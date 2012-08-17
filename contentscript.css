@@ -13,13 +13,13 @@
 }
 
 .justKeysFiltered {
-    background-color: #6495ed;
-    color: white;
+    background-color: yellow;
+    color: blue;
 }
 
 .justKeysFilteredNumber {
     border: 1px solid black;
-    background: #00008b;
+    background: #5355ff;
     color: white;
     font: 0.8em cursive;
 }
