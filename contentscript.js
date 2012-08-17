@@ -6,95 +6,91 @@
     var justKeysFilteredNumberClass = "justKeysFilteredNumber";
     var $h = JustKeysHelper;
 
-    var highlights;
+    var elements;
     var text = "";
 
-    //
-    // Display Functions
-    //
+    var selection = {
+        highlightableElements: function () {
+            var shouldHighlight = function (element) {
+                return $h.hasLink(element) && $h.elementInViewport(element) && $h.isVisible(element);
+            };
+            var elements = document.getElementsByTagName("a");
+            var highlightable = {};
+            var number = 1;
+            for (var i = 0; i < elements.length; i++) {
+                if (shouldHighlight(elements[i])) {
+                    highlightable[number++] = elements[i];
+                }
+            }
+            return highlightable;
+        },
 
-    function filteredElements() {
-        var selection = {};
-        for (var i in highlights) {
-            if (i.toString().indexOf(text) === 0) {
-                selection[i] = highlights[i];
+        filteredElements: function () {
+            var selection = {};
+            for (var i in elements) {
+                if (i.toString().indexOf(text) === 0) {
+                    selection[i] = elements[i];
+                }
+            }
+            return selection;
+        },
+
+        countFilteredElements: function () {
+            return Object.keys(this.filteredElements()).length;
+        }
+    };
+
+    var highlights = {
+        reset: function () {
+            elements = null;
+            $h.removeClassFromAllElements(justKeysHighlightClass);
+            $h.removeClassFromAllElements(justKeysFilteredClass);
+            $h.removeElementsWithClass(justKeysHighlightNumberClass);
+            $h.removeElementsWithClass(justKeysFilteredNumberClass);
+        },
+
+        highlightElement: function (element, text) {
+            var label = document.createElement("span");
+            label.innerText = text;
+            $h.addClass(label, justKeysHighlightNumberClass);
+            $h.addClass(element, justKeysHighlightClass);
+            $h.insertAsFirst(element, label);
+        },
+
+        highlightElements: function () {
+            for (var i in elements) {
+                this.highlightElement(elements[i], i);
             }
         }
-        return selection;
-    }
-
-    function countFilteredElements() {
-        return Object.keys(filteredElements()).length;
-    }
-
-    function resetHighlightedElements() {
-        highlights = null;
-        $h.removeClassFromAllElements(justKeysHighlightClass);
-        $h.removeClassFromAllElements(justKeysFilteredClass);
-        $h.removeElementsWithClass(justKeysHighlightNumberClass);
-        $h.removeElementsWithClass(justKeysFilteredNumberClass);
-    }
-
-    function shouldHighlight(element) {
-        return $h.hasLink(element) && $h.elementInViewport(element) && $h.isVisible(element);
-    }
-
-    function loadHighlightableElements() {
-        var elements = document.getElementsByTagName("a");
-        var highlightable = {};
-        var number = 1;
-        for (var i = 0; i < elements.length; i++) {
-            if (shouldHighlight(elements[i])) {
-                highlightable[number++] = elements[i];
-            }
-        }
-        return highlightable;
-    }
-
-    function highlightElement(element, text) {
-        var label = document.createElement("span");
-        label.innerText = text;
-        $h.addClass(label, justKeysHighlightNumberClass);
-        $h.addClass(element, justKeysHighlightClass);
-        $h.insertAsFirst(element, label);
-    }
-
-    function highlightElements() {
-        for (var i in highlights) {
-            highlightElement(highlights[i], i);
-        }
-    }
+    };
 
     function bindSelectionKeys() {
+        var bindSelectionNumberKey = function(index) {
+            bindKeys(index, function () {
+                text += index;
+            });
+        };
         bindKeys("esc", function () {
-            resetHighlightedElements();
+            highlights.reset();
         });
         bindKeys("backspace", function () {
             text = text.substring(0, text.length - 1);
         });
         for (var i = 0; i < 10; i++) {
-            binSelectionNumberKey(i.toString());
+            bindSelectionNumberKey(i.toString());
         }
     }
-
-    function binSelectionNumberKey(index) {
-        bindKeys(index, function () {
-            text += index;
-        });
-    }
-
 
     //
     // Bound functions
     //
 
     function initFollowLink() {
-        resetHighlightedElements();
-        highlights = loadHighlightableElements();
-        highlightElements();
+        highlights.reset();
+        elements = selection.highlightableElements();
+        highlights.highlightElements();
         bindSelectionKeys();
     }
-
 
     // Function to hide the chrome module
     function request(action, callback) {
