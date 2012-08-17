@@ -41,6 +41,7 @@
     //
 
     function resetHighlightedElements() {
+        highlights = null;
         $h.removeClassFromAllElements(justKeysHighlightClass);
         $h.removeClassFromAllElements(justKeysFilteredClass);
         $h.removeElementsWithClass(justKeysHighlightNumberClass);
@@ -83,13 +84,18 @@
         bindKeys("backspace", function () {
             highlights.removeLastFromFilter();
         });
+        bindKeys("esc", function () {
+            resetHighlightedElements();
+        });
         for (var i = 0; i < 10; i++) {
-            (function (index) {
-                bindKeys(index, function () {
-                    highlights.addToFilter(index)
-                });
-            })(i.toString());
+            selectionKey(i.toString());
         }
+    }
+
+    function selectionKey(index) {
+        bindKeys(index, function () {
+            highlights.addToFilter(index)
+        });
     }
 
 
