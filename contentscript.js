@@ -32,16 +32,12 @@
             return selection;
         },
 
-        selectedElement: function(elements) {
-            if (this.countFilteredElements(elements) === 1) {
-                for (var first in this.filteredElements(elements)) break;
-                return first;
+        selectedElement: function (elements) {
+            var filtered = this.filteredElements(elements);
+            if (Object.keys(filtered).length === 1) {
+                for (var i in filtered) return filtered[i];
             }
             return null;
-        },
-
-        countFilteredElements: function (elements) {
-            return Object.keys(this.filteredElements(elements)).length;
         }
     };
 
@@ -54,6 +50,7 @@
             JkDom.addClass(element, highlightClass);
             JkDom.insertAsFirst(element, label);
         }
+
         return {
             reset: function () {
                 JkDom.removeClassFromAllElements(jkHighlightClass);
@@ -108,6 +105,16 @@
         };
         bindKeys("esc", function () {
             reset();
+        });
+        bindKeys("return", function () {
+            var selected = selection.selectedElement(elements);
+            if (selected) {
+                var href = selected.getAttribute("href");
+                console.log("Opening " + href);
+                chrome.extension.sendRequest({action: "follow", url: href}, function(response) {
+                    console.log(response);
+                });
+            }
         });
         bindKeys("d", function () {
             text = text.substring(0, text.length - 1);

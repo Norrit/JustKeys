@@ -18,6 +18,10 @@
             // chrome query directly uses the response function to send back
             // the response
             chrome.tabs.query({currentWindow: true}, response);
+        },
+
+        follow: function(request, sender, response) {
+            chrome.tabs.create({url: request.url}, response);
         }
     };
 
