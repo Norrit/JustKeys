@@ -1,10 +1,10 @@
 (function () {
 
     //
-    // Helper Functions.
+    // DOM Functions.
     // Don't want to inject a "big" library into the site.
     //
-    var justKeysHelper = {
+    var jkDom = {
 
         addClass: function (element, className) {
             if (!this.hasClass(element, className)) {
@@ -88,7 +88,7 @@
 
     };
 
-    //Expose the helper functions
-    window.JustKeysHelper = justKeysHelper;
+    //Expose the DOM functions
+    window.JkDom = jkDom;
 
 })();

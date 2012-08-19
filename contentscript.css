@@ -1,35 +1,35 @@
 /* Content Script CSS */
 
-.justKeysHighlight {
+.jkHighlight {
     background-color: yellow;
     color: blue;
 }
 
-.justKeysHighlightNumber {
+.jkHighlightNumber {
     border: 1px solid black;
     background: red;
     color: white;
     font: 0.8em cursive;
 }
 
-.justKeysFiltered {
+.jkFiltered {
     background-color: yellow;
     color: blue;
 }
 
-.justKeysFilteredNumber {
+.jkFilteredNumber {
     border: 1px solid black;
     background: #6a96ff;
     color: white;
     font: 0.8em cursive;
 }
 
-.justKeysSelected {
+.jkSelected {
     background-color: #98ff2e;
     color: black;
 }
 
-.justKeysSelectedNumber {
+.jkSelectedNumber {
     border: 1px solid black;
     background: #42ed1b;
     color: black;

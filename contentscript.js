@@ -1,12 +1,11 @@
 (function () {
 
-    var justKeysHighlightClass = "justKeysHighlight";
-    var justKeysHighlightNumberClass = "justKeysHighlightNumber";
-    var justKeysFilteredClass = "justKeysFiltered";
-    var justKeysFilteredNumberClass = "justKeysFilteredNumber";
-    var justKeysSelectedClass = "justKeysSelected";
-    var justKeysSelectedNumberClass = "justKeysSelectedNumber";
-    var $h = JustKeysHelper;
+    var jkHighlightClass = "jkHighlight";
+    var jkHighlightNumberClass = "jkHighlightNumber";
+    var jkFilteredClass = "jkFiltered";
+    var jkFilteredNumberClass = "jkFilteredNumber";
+    var jkSelectedClass = "jkSelected";
+    var jkSelectedNumberClass = "jkSelectedNumber";
 
     var elements;
     var text = "";
@@ -51,34 +50,34 @@
         function highlightElement(element, text, highlightClass, numberClass) {
             var label = document.createElement("span");
             label.innerText = text;
-            $h.addClass(label, numberClass);
-            $h.addClass(element, highlightClass);
-            $h.insertAsFirst(element, label);
+            JkDom.addClass(label, numberClass);
+            JkDom.addClass(element, highlightClass);
+            JkDom.insertAsFirst(element, label);
         }
         return {
             reset: function () {
-                $h.removeClassFromAllElements(justKeysHighlightClass);
-                $h.removeClassFromAllElements(justKeysFilteredClass);
-                $h.removeClassFromAllElements(justKeysSelectedClass);
-                $h.removeElementsWithClass(justKeysHighlightNumberClass);
-                $h.removeElementsWithClass(justKeysFilteredNumberClass);
-                $h.removeElementsWithClass(justKeysSelectedNumberClass);
+                JkDom.removeClassFromAllElements(jkHighlightClass);
+                JkDom.removeClassFromAllElements(jkFilteredClass);
+                JkDom.removeClassFromAllElements(jkSelectedClass);
+                JkDom.removeElementsWithClass(jkHighlightNumberClass);
+                JkDom.removeElementsWithClass(jkFilteredNumberClass);
+                JkDom.removeElementsWithClass(jkSelectedNumberClass);
             },
 
             highlightElements: function (elements) {
                 this.reset();
                 var highlighted = selection.highlightedElements(elements);
                 for (var i in highlighted) {
-                    highlightElement(highlighted[i], i, justKeysHighlightClass, justKeysHighlightNumberClass);
+                    highlightElement(highlighted[i], i, jkHighlightClass, jkHighlightNumberClass);
                 }
                 var filtered = selection.filteredElements(elements);
                 if (Object.keys(filtered).length === 1) {
                     for (var selected in filtered) {
-                        highlightElement(filtered[selected], selected, justKeysSelectedClass, justKeysSelectedNumberClass);
+                        highlightElement(filtered[selected], selected, jkSelectedClass, jkSelectedNumberClass);
                     }
                 } else {
                     for (var n in filtered) {
-                        highlightElement(filtered[n], n, justKeysFilteredClass, justKeysFilteredNumberClass);
+                        highlightElement(filtered[n], n, jkFilteredClass, jkFilteredNumberClass);
                     }
                 }
             }
@@ -87,7 +86,7 @@
 
     function highlightableElements() {
         var shouldHighlight = function (element) {
-            return $h.hasLink(element) && $h.elementInViewport(element) && $h.isVisible(element);
+            return JkDom.hasLink(element) && JkDom.elementInViewport(element) && JkDom.isVisible(element);
         };
         var elements = document.getElementsByTagName("a");
         var highlightable = {};
