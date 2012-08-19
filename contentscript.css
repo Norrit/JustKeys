@@ -19,7 +19,19 @@
 
 .justKeysFilteredNumber {
     border: 1px solid black;
-    background: #5355ff;
+    background: #6a96ff;
     color: white;
+    font: 0.8em cursive;
+}
+
+.justKeysSelected {
+    background-color: #98ff2e;
+    color: black;
+}
+
+.justKeysSelectedNumber {
+    border: 1px solid black;
+    background: #42ed1b;
+    color: black;
     font: 0.8em cursive;
 }

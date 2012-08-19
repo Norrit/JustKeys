@@ -4,6 +4,8 @@
     var justKeysHighlightNumberClass = "justKeysHighlightNumber";
     var justKeysFilteredClass = "justKeysFiltered";
     var justKeysFilteredNumberClass = "justKeysFilteredNumber";
+    var justKeysSelectedClass = "justKeysSelected";
+    var justKeysSelectedNumberClass = "justKeysSelectedNumber";
     var $h = JustKeysHelper;
 
     var elements;
@@ -31,11 +33,18 @@
             return selection;
         },
 
+        selectedElement: function(elements) {
+            if (this.countFilteredElements(elements) === 1) {
+                for (var first in this.filteredElements(elements)) break;
+                return first;
+            }
+            return null;
+        },
+
         countFilteredElements: function (elements) {
             return Object.keys(this.filteredElements(elements)).length;
         }
     };
-
 
 
     var highlights = (function () {
@@ -50,8 +59,10 @@
             reset: function () {
                 $h.removeClassFromAllElements(justKeysHighlightClass);
                 $h.removeClassFromAllElements(justKeysFilteredClass);
+                $h.removeClassFromAllElements(justKeysSelectedClass);
                 $h.removeElementsWithClass(justKeysHighlightNumberClass);
                 $h.removeElementsWithClass(justKeysFilteredNumberClass);
+                $h.removeElementsWithClass(justKeysSelectedNumberClass);
             },
 
             highlightElements: function (elements) {
@@ -61,8 +72,14 @@
                     highlightElement(highlighted[i], i, justKeysHighlightClass, justKeysHighlightNumberClass);
                 }
                 var filtered = selection.filteredElements(elements);
-                for (var n in filtered) {
-                    highlightElement(filtered[n], n, justKeysFilteredClass, justKeysFilteredNumberClass);
+                if (Object.keys(filtered).length === 1) {
+                    for (var selected in filtered) {
+                        highlightElement(filtered[selected], selected, justKeysSelectedClass, justKeysSelectedNumberClass);
+                    }
+                } else {
+                    for (var n in filtered) {
+                        highlightElement(filtered[n], n, justKeysFilteredClass, justKeysFilteredNumberClass);
+                    }
                 }
             }
         };
