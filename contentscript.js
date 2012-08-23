@@ -118,7 +118,7 @@
         bindKeys("return", function () {
             var selected = highlights.selectedElement();
             if (selected) {
-                var href = selected.getAttribute("href");
+                var href = selected.href;
                 console.log("Opening " + href);
                 action(href);
             }
