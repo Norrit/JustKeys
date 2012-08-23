@@ -1,85 +1,93 @@
-(function () {
+(function (JkDom) {
 
-    var jkHighlightClass = "jkHighlight";
-    var jkHighlightNumberClass = "jkHighlightNumber";
-    var jkFilteredClass = "jkFiltered";
-    var jkFilteredNumberClass = "jkFilteredNumber";
-    var jkSelectedClass = "jkSelected";
-    var jkSelectedNumberClass = "jkSelectedNumber";
+    var JK_HIGHLIGHT_CLASS = "jkHighlight";
+    var JK_HIGHLIGHT_NUMBER_CLASS = "jkHighlightNumber";
+    var JK_FILTERED_CLASS = "jkFiltered";
+    var JK_FILTERED_NUMBER_CLASS = "jkFilteredNumber";
+    var JK_SELECTED_CLASS = "jkSelected";
+    var JK_SELECTED_NUMBER_CLASS = "jkSelectedNumber";
 
-    var elements;
-    var text = "";
+    var highlights;
+    var action;
 
-    var selection = {
-        highlightedElements: function (elements) {
-            var selected = this.filteredElements(elements);
-            var highlighted = {};
-            for (var i in elements) {
-                if (!selected[i]) {
-                    highlighted[i] = elements[i];
-                }
-            }
-            return highlighted;
-        },
+    function highlight(elements, text) {
 
-        filteredElements: function (elements) {
-            var selection = {};
-            for (var i in elements) {
-                if (text != "" && i.toString().indexOf(text) === 0) {
-                    selection[i] = elements[i];
-                }
-            }
-            return selection;
-        },
-
-        selectedElement: function (elements) {
-            var filtered = this.filteredElements(elements);
-            if (Object.keys(filtered).length === 1) {
-                for (var i in filtered) return filtered[i];
-            }
-            return null;
-        }
-    };
-
-
-    var highlights = (function () {
-        function highlightElement(element, text, highlightClass, numberClass) {
+        function highlightElement(element, number, highlightClass, numberClass) {
             var label = document.createElement("span");
-            label.innerText = text;
+            label.innerText = number;
             JkDom.addClass(label, numberClass);
             JkDom.addClass(element, highlightClass);
             JkDom.insertAsFirst(element, label);
         }
 
-        return {
-            reset: function () {
-                JkDom.removeClassFromAllElements(jkHighlightClass);
-                JkDom.removeClassFromAllElements(jkFilteredClass);
-                JkDom.removeClassFromAllElements(jkSelectedClass);
-                JkDom.removeElementsWithClass(jkHighlightNumberClass);
-                JkDom.removeElementsWithClass(jkFilteredNumberClass);
-                JkDom.removeElementsWithClass(jkSelectedNumberClass);
-            },
-
-            highlightElements: function (elements) {
+        var h = {
+            highlightElements: function () {
                 this.reset();
-                var highlighted = selection.highlightedElements(elements);
+                var highlighted = this.highlightedElements();
                 for (var i in highlighted) {
-                    highlightElement(highlighted[i], i, jkHighlightClass, jkHighlightNumberClass);
+                    highlightElement(highlighted[i], i, JK_HIGHLIGHT_CLASS, JK_HIGHLIGHT_NUMBER_CLASS);
                 }
-                var filtered = selection.filteredElements(elements);
+                var filtered = this.filteredElements();
                 if (Object.keys(filtered).length === 1) {
                     for (var selected in filtered) {
-                        highlightElement(filtered[selected], selected, jkSelectedClass, jkSelectedNumberClass);
+                        highlightElement(filtered[selected], selected, JK_SELECTED_CLASS, JK_SELECTED_NUMBER_CLASS);
                     }
                 } else {
                     for (var n in filtered) {
-                        highlightElement(filtered[n], n, jkFilteredClass, jkFilteredNumberClass);
+                        highlightElement(filtered[n], n, JK_FILTERED_CLASS, JK_FILTERED_NUMBER_CLASS);
                     }
                 }
+            },
+
+            reset: function () {
+                JkDom.removeClassFromAllElements(JK_HIGHLIGHT_CLASS);
+                JkDom.removeClassFromAllElements(JK_FILTERED_CLASS);
+                JkDom.removeClassFromAllElements(JK_SELECTED_CLASS);
+                JkDom.removeElementsWithClass(JK_HIGHLIGHT_NUMBER_CLASS);
+                JkDom.removeElementsWithClass(JK_FILTERED_NUMBER_CLASS);
+                JkDom.removeElementsWithClass(JK_SELECTED_NUMBER_CLASS);
+            },
+
+            filteredElements: function () {
+                var selection = {};
+                for (var i in elements) {
+                    if (text != "" && i.toString().indexOf(text) === 0) {
+                        selection[i] = elements[i];
+                    }
+                }
+                return selection;
+            },
+
+            highlightedElements: function () {
+                var selected = this.filteredElements();
+                var highlighted = {};
+                for (var i in elements) {
+                    if (!selected[i]) {
+                        highlighted[i] = elements[i];
+                    }
+                }
+                return highlighted;
+            },
+
+            selectedElement: function () {
+                var filtered = this.filteredElements();
+                if (Object.keys(filtered).length === 1) {
+                    for (var i in filtered) return filtered[i];
+                }
+                return null;
+            },
+
+            text: function() {
+                return text;
+            },
+
+            elements: function() {
+                return elements;
             }
         };
-    })();
+        h.highlightElements();
+        return h;
+    }
 
     function highlightableElements() {
         var shouldHighlight = function (element) {
@@ -99,36 +107,44 @@
     function bindSelectionKeys() {
         var bindSelectionNumberKey = function (index) {
             bindKeys(index, function () {
-                text += index;
-                highlights.highlightElements(elements);
+                var text = highlights.text() + index;
+                var elements = highlights.elements();
+                highlights = highlight(elements, text);
             });
         };
         bindKeys("esc", function () {
             reset();
         });
         bindKeys("return", function () {
-            var selected = selection.selectedElement(elements);
+            var selected = highlights.selectedElement();
             if (selected) {
                 var href = selected.getAttribute("href");
                 console.log("Opening " + href);
-                chrome.extension.sendRequest({action: "follow", url: href}, function(response) {
-                    console.log(response);
-                });
+                action(href);
             }
         });
         bindKeys("d", function () {
+            var text = highlights.text();
             text = text.substring(0, text.length - 1);
-            highlights.highlightElements(elements);
+            var elements = highlights.elements();
+            highlights = highlight(elements, text);
         });
         for (var i = 0; i < 10; i++) {
             bindSelectionNumberKey(i.toString());
         }
     }
 
+    function start() {
+        highlights = highlight(highlightableElements(), "");
+        bindSelectionKeys();
+    }
+
     function reset() {
-        elements = null;
-        text = "";
-        highlights.reset();
+        if (highlights != null) {
+            highlights.reset();
+            highlights = null;
+        }
+        action = null;
     }
 
     //
@@ -137,9 +153,22 @@
 
     function initFollowLink() {
         reset();
-        elements = highlightableElements();
-        highlights.highlightElements(elements);
-        bindSelectionKeys();
+        action = function(href) {
+            chrome.extension.sendRequest({action: "follow", url: href}, function(response) {
+                console.log(response);
+            });
+        };
+        start();
+    }
+
+    function initGotoLink() {
+        reset();
+        action = function(href) {
+            chrome.extension.sendRequest({action: "goto", url: href}, function(response) {
+                console.log(response);
+            });
+        };
+        start();
     }
 
     // Function to hide the chrome module
@@ -167,4 +196,4 @@
         }
     });
 
-})();
+})(JkDom);

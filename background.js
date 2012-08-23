@@ -10,7 +10,8 @@
             // TODO: Load keybindings from preferences
             // One place to define action name, keybinding and the name of the
             // function to execute
-            var bindings = {followLink: {keys: "f", fn: "initFollowLink"}};
+            var bindings = {followLink: {keys: "f", fn: "initFollowLink"},
+                            gotoLink: {keys: "g", fn: "initGotoLink"}};
             response(bindings);
         },
 
@@ -21,6 +22,10 @@
         },
 
         follow: function(request, sender, response) {
+            chrome.tabs.update({url: request.url}, response);
+        },
+
+        goto: function(request, sender, response) {
             chrome.tabs.create({url: request.url}, response);
         }
     };
