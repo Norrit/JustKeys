@@ -154,7 +154,7 @@
     function initFollowLink() {
         reset();
         action = function (href) {
-            chrome.extension.sendRequest({action:"follow", url:href}, function (response) {
+            request({action:"follow", url:href}, function (response) {
                 console.log(response);
             });
         };
@@ -164,7 +164,7 @@
     function initGotoLink() {
         reset();
         action = function (href) {
-            chrome.extension.sendRequest({action:"goto", url:href}, function (response) {
+            request({action: "goto", url: href}, function (response) {
                 console.log(response);
             });
         };
@@ -173,7 +173,7 @@
 
     // Function to hide the chrome module
     function request(action, callback) {
-        chrome.extension.sendRequest({action:action}, callback);
+        chrome.extension.sendRequest(action, callback);
     }
 
     // Function to hide Mousetrap.js
@@ -185,7 +185,7 @@
     // Setup.
     // Hook all keybindings into the current site.
     //
-    request("keybindings", function (keybindings) {
+    request({action: 'keybindings'}, function (keybindings) {
         for (var prop in keybindings) {
             var keybinding = keybindings[prop];
             // eval is dangerous ... but should be fine here because no user
