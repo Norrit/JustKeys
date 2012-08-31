@@ -155,7 +155,7 @@
         reset();
         action = function (href) {
             request({action:"follow", url:href}, function (response) {
-                console.log(response);
+                reset();
             });
         };
         start();
@@ -165,7 +165,7 @@
         reset();
         action = function (href) {
             request({action: "goto", url: href}, function (response) {
-                console.log(response);
+                reset();
             });
         };
         start();
