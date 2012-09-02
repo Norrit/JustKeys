@@ -1,4 +1,4 @@
-(function () {
+(function (window, tabs) {
 
     //
     // Actions.
@@ -18,19 +18,20 @@
         tabs: function (request, sender, response) {
             // chrome query directly uses the response function to send back
             // the response
-            chrome.tabs.query({currentWindow: true}, response);
+            tabs.query({currentWindow: true}, response);
         },
 
         follow: function(request, sender, response) {
-            chrome.tabs.update({url: request.url}, response);
+            tabs.update({url: request.url}, response);
         },
 
         goto: function(request, sender, response) {
-            chrome.tabs.create({url: request.url}, response);
+            tabs.create({url: request.url}, response);
         }
     };
 
-    var justKeys = {
+    // Expose `JustKeys` to the global object
+    window.JustKeys = {
 
         /**
          * Dispatches the received message from the `JustKeys` frontend.
@@ -45,10 +46,7 @@
         }
     };
 
-    // Expose `JustKeys` to the global object
-    window.JustKeys = justKeys;
-
-})();
+})(window, chrome.tabs);
 
 /**
  * Message Handling Setup

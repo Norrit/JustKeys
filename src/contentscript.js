@@ -1,4 +1,4 @@
-(function (JkDom) {
+(function (JkDom, bindKeys, request) {
 
     var JK_HIGHLIGHT_CLASS = "jkHighlight";
     var JK_HIGHLIGHT_NUMBER_CLASS = "jkHighlightNumber";
@@ -139,7 +139,6 @@
     //
     // Bound functions
     //
-
     function initFollowLink() {
         reset();
         highlights = highlight(highlightableElements(), "");
@@ -160,16 +159,6 @@
         });
     }
 
-    // Function to hide the chrome module
-    function request(action, callback) {
-        chrome.extension.sendRequest(action, callback);
-    }
-
-    // Function to hide Mousetrap.js
-    function bindKeys(keys, fn) {
-        Mousetrap.bind(keys, fn);
-    }
-
     //
     // Setup.
     // Hook all keybindings into the current site.
@@ -185,4 +174,4 @@
         }
     });
 
-})(window.JkDom);
+})(window.JkDom, Mousetrap.bind, chrome.extension.sendRequest);
