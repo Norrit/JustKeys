@@ -8,7 +8,6 @@
     var JK_SELECTED_NUMBER_CLASS = "jkSelectedNumber";
 
     var highlights;
-    var action;
 
     function highlight(elements, text) {
 
@@ -27,63 +26,59 @@
         }
 
         var selected = (function () {
-            for (var i in elements) {
-                var selected = {};
-                if (text != "" && i.toString().indexOf(text) === 0) {
-                    selected[i] = elements[i];
-                    break;
+                for (var i in elements) {
+                    var selected = {};
+                    if (text != "" && i.toString().indexOf(text) === 0) {
+                        selected[i] = elements[i];
+                        break;
+                    }
                 }
-            }
-            return selected;
-        })(),
+                return selected;
+            })(),
 
-        filtered = (function () {
-            var filtered = {};
-            for (var i in elements) {
-                if (text != "" && i.toString().indexOf(text) === 0 && !selected[i]) {
-                    filtered[i] = elements[i];
+            filtered = (function () {
+                var filtered = {};
+                for (var i in elements) {
+                    if (text != "" && i.toString().indexOf(text) === 0 && !selected[i]) {
+                        filtered[i] = elements[i];
+                    }
                 }
-            }
-            return filtered;
-        })(),
+                return filtered;
+            })(),
 
-        highlighted = (function () {
-            var highlighted = {};
-            for (var i in elements) {
-                if (!selected[i] && !filtered[i]) {
-                    highlighted[i] = elements[i];
+            highlighted = (function () {
+                var highlighted = {};
+                for (var i in elements) {
+                    if (!selected[i] && !filtered[i]) {
+                        highlighted[i] = elements[i];
+                    }
                 }
-            }
-            return highlighted;
-        })();
+                return highlighted;
+            })();
 
 
         var h = {
-            highlightElements:function () {
+            highlightElements: function () {
                 this.reset();
-                highlightElements(highlighted,JK_HIGHLIGHT_CLASS, JK_HIGHLIGHT_NUMBER_CLASS);
-                highlightElements(filtered,JK_FILTERED_CLASS, JK_FILTERED_NUMBER_CLASS);
-                highlightElements(selected,JK_SELECTED_CLASS, JK_SELECTED_NUMBER_CLASS);
+                highlightElements(highlighted, JK_HIGHLIGHT_CLASS, JK_HIGHLIGHT_NUMBER_CLASS);
+                highlightElements(filtered, JK_FILTERED_CLASS, JK_FILTERED_NUMBER_CLASS);
+                highlightElements(selected, JK_SELECTED_CLASS, JK_SELECTED_NUMBER_CLASS);
             },
 
-            reset:function () {
-                JkDom.removeClassFromAllElements(JK_HIGHLIGHT_CLASS);
-                JkDom.removeClassFromAllElements(JK_FILTERED_CLASS);
-                JkDom.removeClassFromAllElements(JK_SELECTED_CLASS);
-                JkDom.removeElementsWithClass(JK_HIGHLIGHT_NUMBER_CLASS);
-                JkDom.removeElementsWithClass(JK_FILTERED_NUMBER_CLASS);
-                JkDom.removeElementsWithClass(JK_SELECTED_NUMBER_CLASS);
+            reset: function () {
+                JkDom.removeClassesFromAllElements([JK_HIGHLIGHT_CLASS, JK_FILTERED_CLASS, JK_SELECTED_CLASS]);
+                JkDom.removeElementsWithClasses([JK_HIGHLIGHT_NUMBER_CLASS, JK_FILTERED_NUMBER_CLASS, JK_SELECTED_NUMBER_CLASS]);
             },
 
-            selectedElement:function () {
+            selectedElement: function () {
                 for (var first in selected) return selected[first];
             },
 
-            text:function () {
+            text: function () {
                 return text;
             },
 
-            elements:function () {
+            elements: function () {
                 return elements;
             }
         };
@@ -106,7 +101,7 @@
         return highlightable;
     }
 
-    function bindSelectionKeys() {
+    function bindSelectionKeys(action) {
         var bindSelectionNumberKey = function (index) {
             bindKeys(index, function () {
                 var text = highlights.text() + index;
@@ -134,17 +129,11 @@
         }
     }
 
-    function start() {
-        highlights = highlight(highlightableElements(), "");
-        bindSelectionKeys();
-    }
-
     function reset() {
         if (highlights != null) {
             highlights.reset();
             highlights = null;
         }
-        action = null;
     }
 
     //
@@ -153,22 +142,22 @@
 
     function initFollowLink() {
         reset();
-        action = function (href) {
-            request({action:"follow", url:href}, function (response) {
+        highlights = highlight(highlightableElements(), "");
+        bindSelectionKeys(function (href) {
+            request({action: "follow", url: href}, function (response) {
                 reset();
             });
-        };
-        start();
+        });
     }
 
     function initGotoLink() {
         reset();
-        action = function (href) {
+        highlights = highlight(highlightableElements(), "");
+        bindSelectionKeys(function (href) {
             request({action: "goto", url: href}, function (response) {
                 reset();
             });
-        };
-        start();
+        });
     }
 
     // Function to hide the chrome module
@@ -196,4 +185,4 @@
         }
     });
 
-})(JkDom);
+})(window.JkDom);

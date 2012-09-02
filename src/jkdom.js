@@ -16,28 +16,12 @@
             }
         },
 
-        removeClass: function (element, className) {
-            var regexp = this.addClass[className];
-            if (!regexp) {
-                regexp = this.addClass[className] = new RegExp("(^|\\s)" + className + "(\\s|$)");
-            }
-            element.className = element.className.replace(regexp, "$2");
-        },
-
         hasClass: function (element, className) {
             var regexp = this.addClass[className];
             if (!regexp) {
                 regexp = this.addClass[className] = new RegExp("(^|\\s)" + className + "(\\s|$)");
             }
             return regexp.test(element.className);
-        },
-
-        toggleClass: function (element, className) {
-            if (this.hasClass(element, className)) {
-                this.removeClass(element, className);
-            } else {
-                this.addClass(element, className);
-            }
         },
 
         elementInViewport: function (el) {
@@ -68,17 +52,23 @@
             element.parentNode.removeChild(element);
         },
 
-        removeClassFromAllElements: function (className) {
-            var elements = document.getElementsByClassName(className);
-            while (elements.length > 0) {
-                this.removeClass(elements[0], className);
+        removeClassesFromAllElements: function (classNames) {
+            var length = classNames.length;
+            for (var i = 0, className = classNames[i]; i < length; i++, className = classNames[i]) {
+                var elements = document.getElementsByClassName(className);
+                while (elements.length > 0) {
+                    elements[0].classList.remove(className);
+                }
             }
         },
 
-        removeElementsWithClass: function(className) {
-            var elements = document.getElementsByClassName(className);
-            while (elements.length > 0) {
-                this.remove(elements[0]);
+        removeElementsWithClasses: function(classNames) {
+            var length = classNames.length;
+            for (var i = 0, className = classNames[i]; i < length; i++, className = classNames[i]) {
+                var elements = document.getElementsByClassName(className);
+                while (elements.length > 0) {
+                    this.remove(elements[0]);
+                }
             }
         },
 
