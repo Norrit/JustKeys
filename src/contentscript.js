@@ -7,58 +7,43 @@
     var JK_SELECTED_CLASS = "jkSelected";
     var JK_SELECTED_NUMBER_CLASS = "jkSelectedNumber";
 
-    var highlights;
+    var each = JkDom.each, map = JkDom.map, filter = JkDom.filter, any = JkDom.any, firstInArray = JkDom.firstInArray,
+        highlights;
 
-    function highlight(elements, text) {
+    function highlight(nodes, text) {
 
-        function highlightElement(element, number, highlightClass, numberClass) {
-            var label = document.createElement("span");
-            label.innerText = number;
-            JkDom.addClass(label, numberClass);
-            JkDom.addClass(element, highlightClass);
-            JkDom.insertAsFirst(element, label);
-        }
+        var elements = map(nodes, function (element, index) {
+                return {index: index, node: element};
+            }),
 
-        function highlightElements(elements, highlightClass, numberClass) {
-            for (var i in elements) {
-                highlightElement(elements[i], i, highlightClass, numberClass);
-            }
-        }
+            selected = firstInArray(filter(elements, function (element) {
+                return text != "" && element.index.toString().indexOf(text) === 0;
+            })),
 
-        var selected = (function () {
-                for (var i in elements) {
-                    var selected = {};
-                    if (text != "" && i.toString().indexOf(text) === 0) {
-                        selected[i] = elements[i];
-                        break;
-                    }
-                }
-                return selected;
-            })(),
+            filtered = filter(elements, function (element) {
+                return text != "" && element.index.toString().indexOf(text) === 0 &&
+                    (selected.length > 0 ? element.index !== selected[0].index : true);
+            }),
 
-            filtered = (function () {
-                var filtered = {};
-                for (var i in elements) {
-                    if (text != "" && i.toString().indexOf(text) === 0 && !selected[i]) {
-                        filtered[i] = elements[i];
-                    }
-                }
-                return filtered;
-            })(),
-
-            highlighted = (function () {
-                var highlighted = {};
-                for (var i in elements) {
-                    if (!selected[i] && !filtered[i]) {
-                        highlighted[i] = elements[i];
-                    }
-                }
-                return highlighted;
-            })();
-
+            highlighted = filter(elements, function (element) {
+                return (selected.length > 0 ? element.index !== selected[0].index : true) &&
+                    !any(filtered, function (fil) {
+                        return fil.index == element.index;
+                    });
+            });
 
         var h = {
             highlightElements: function () {
+                function highlightElements(elements, highlightClass, numberClass) {
+                    each(elements, function (element) {
+                        var label = document.createElement("span");
+                        label.innerText = element.index;
+                        JkDom.addClass(label, numberClass);
+                        JkDom.addClass(element.node, highlightClass);
+                        JkDom.insertAsFirst(element.node, label);
+                    });
+                }
+
                 this.reset();
                 highlightElements(highlighted, JK_HIGHLIGHT_CLASS, JK_HIGHLIGHT_NUMBER_CLASS);
                 highlightElements(filtered, JK_FILTERED_CLASS, JK_FILTERED_NUMBER_CLASS);
@@ -71,7 +56,7 @@
             },
 
             selectedElement: function () {
-                for (var first in selected) return selected[first];
+                return selected.length > 0 ? selected[0].node : null;
             },
 
             text: function () {
@@ -79,7 +64,7 @@
             },
 
             elements: function () {
-                return elements;
+                return nodes;
             }
         };
         h.highlightElements();
@@ -164,14 +149,13 @@
     // Hook all keybindings into the current site.
     //
     request({action: 'keybindings'}, function (keybindings) {
-        for (var prop in keybindings) {
-            var keybinding = keybindings[prop];
+        each(keybindings, function(keybinding) {
             // eval is dangerous ... but should be fine here because no user
             // input is evaluated. Somehow invoking the functions by scope
             // doesn't work.
             console.log("Register Binding:", keybinding);
             bindKeys(keybinding.keys, eval(keybinding.fn));
-        }
+        })
     });
 
 })(window.JkDom, Mousetrap.bind, chrome.extension.sendRequest);
