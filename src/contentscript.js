@@ -88,22 +88,22 @@
 
     function bindSelectionKeys(action) {
         var bindSelectionNumberKey = function (index) {
-            bindKeys(index, function () {
+            bindKeys(index, function (e) {
                 var text = highlights.text() + index;
                 var elements = highlights.elements();
                 highlights = highlight(elements, text);
             });
         };
-        bindKeys("esc", function () {
+        bindKeys("esc", function (e) {
             reset();
         });
-        bindKeys("return", function () {
+        bindKeys("return", function (e) {
             var selected = highlights.selectedElement();
             if (selected) {
                 action(selected.href);
             }
         });
-        bindKeys("d", function () {
+        bindKeys("d", function (e) {
             var text = highlights.text();
             text = text.substring(0, text.length - 1);
             var elements = highlights.elements();
@@ -148,8 +148,13 @@
     // Setup.
     // Hook all keybindings into the current site.
     //
+    window.addEventListener('keydown', function (e) {
+        if (e.keyCode === 70 || e.keyCode === 71 || (e.keyCode >= 48 && e.keyCode <= 57)) {
+            e.stopPropagation();
+        }
+    }, true);
     request({action: 'keybindings'}, function (keybindings) {
-        each(keybindings, function(keybinding) {
+        each(keybindings, function (keybinding) {
             // eval is dangerous ... but should be fine here because no user
             // input is evaluated. Somehow invoking the functions by scope
             // doesn't work.

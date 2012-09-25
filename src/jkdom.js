@@ -1,5 +1,4 @@
 (function (window) {
-
     //
     // Helper and DOM Functions.
     // Don't want to inject a "big" library into the site.
