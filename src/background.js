@@ -10,8 +10,8 @@
             // TODO: Load keybindings from preferences
             // One place to define action name, keybinding and the name of the
             // function to execute
-            var bindings = {followLink: {keys: "f", fn: "initFollowLink"},
-                            gotoLink: {keys: "g", fn: "initGotoLink"}};
+            var bindings = {followLink: {keys: "f", fn: "initFollowLink", keyCode: 70},
+                            gotoLink: {keys: "g", fn: "initGotoLink", keyCode: 71}};
             response(bindings);
         },
 

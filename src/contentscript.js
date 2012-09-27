@@ -1,4 +1,4 @@
-(function (JkDom, bindKeys, request) {
+(function (window, JkDom, bindKeys, request) {
 
     var JK_HIGHLIGHT_CLASS = "jkHighlight";
     var JK_HIGHLIGHT_NUMBER_CLASS = "jkHighlightNumber";
@@ -7,28 +7,32 @@
     var JK_SELECTED_CLASS = "jkSelected";
     var JK_SELECTED_NUMBER_CLASS = "jkSelectedNumber";
 
-    var each = JkDom.each, map = JkDom.map, filter = JkDom.filter, any = JkDom.any, firstInArray = JkDom.firstInArray,
+    var each = JkDom.each,
+        map = JkDom.map,
+        filter = JkDom.filter,
+        any = JkDom.any,
+        firstInArray = JkDom.firstInArray,
         highlights;
 
     function highlight(nodes, text) {
 
-        var elements = map(nodes, function (element, index) {
-                return {index: index, node: element};
+        var elements = map(nodes, function (node, index) {
+                return {index: index, node: node};
             }),
 
-            selected = firstInArray(filter(elements, function (element) {
-                return text != "" && element.index.toString().indexOf(text) === 0;
+            selected = firstInArray(filter(elements, function (node) {
+                return text != "" && node.index.toString().indexOf(text) === 0;
             })),
 
-            filtered = filter(elements, function (element) {
-                return text != "" && element.index.toString().indexOf(text) === 0 &&
-                    (selected.length > 0 ? element.index !== selected[0].index : true);
+            filtered = filter(elements, function (node) {
+                return text != "" && node.index.toString().indexOf(text) === 0 &&
+                    (selected.length > 0 ? node.index !== selected[0].index : true);
             }),
 
-            highlighted = filter(elements, function (element) {
-                return (selected.length > 0 ? element.index !== selected[0].index : true) &&
+            highlighted = filter(elements, function (node) {
+                return (selected.length > 0 ? node.index !== selected[0].index : true) &&
                     !any(filtered, function (fil) {
-                        return fil.index == element.index;
+                        return fil.index == node.index;
                     });
             });
 
@@ -88,22 +92,23 @@
 
     function bindSelectionKeys(action) {
         var bindSelectionNumberKey = function (index) {
-            bindKeys(index, function (e) {
+            interceptKeydownEvent(index + 47);
+            bindKeys(index, function () {
                 var text = highlights.text() + index;
                 var elements = highlights.elements();
                 highlights = highlight(elements, text);
             });
         };
-        bindKeys("esc", function (e) {
+        bindKeys("esc", function () {
             reset();
         });
-        bindKeys("return", function (e) {
+        bindKeys("return", function () {
             var selected = highlights.selectedElement();
             if (selected) {
                 action(selected.href);
             }
         });
-        bindKeys("d", function (e) {
+        bindKeys("d", function () {
             var text = highlights.text();
             text = text.substring(0, text.length - 1);
             var elements = highlights.elements();
@@ -119,6 +124,16 @@
             highlights.reset();
             highlights = null;
         }
+        initHooks();
+    }
+
+    function interceptKeydownEvent(index) {
+        var listener = function (e) {
+            if (e.keyCode == index) {
+                e.stopPropagation();
+            }
+        };
+        window.addEventListener('keydown', listener, true);
     }
 
     //
@@ -148,19 +163,19 @@
     // Setup.
     // Hook all keybindings into the current site.
     //
-    window.addEventListener('keydown', function (e) {
-        if (e.keyCode === 70 || e.keyCode === 71 || (e.keyCode >= 48 && e.keyCode <= 57)) {
-            e.stopPropagation();
-        }
-    }, true);
-    request({action: 'keybindings'}, function (keybindings) {
-        each(keybindings, function (keybinding) {
-            // eval is dangerous ... but should be fine here because no user
-            // input is evaluated. Somehow invoking the functions by scope
-            // doesn't work.
-            console.log("Register Binding:", keybinding);
-            bindKeys(keybinding.keys, eval(keybinding.fn));
-        })
-    });
+    function initHooks() {
+        request({action: 'keybindings'}, function (keybindings) {
+            each(keybindings, function (keybinding) {
+                // eval is dangerous ... but should be fine here because no user
+                // input is evaluated. Somehow invoking the functions by scope
+                // doesn't work.
+                console.log("Register Binding:", keybinding);
+                bindKeys(keybinding.keys, eval(keybinding.fn));
+                // Intercept keydown events of bound keys to prevent Google Insta Search
+                interceptKeydownEvent(keybinding.keyCode)
+            })
+        });
+    }
+    initHooks();
 
-})(window.JkDom, Mousetrap.bind, chrome.extension.sendRequest);
+})(window, window.JkDom, Mousetrap.bind, chrome.extension.sendRequest);
