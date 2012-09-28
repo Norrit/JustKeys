@@ -92,7 +92,7 @@
 
     function bindSelectionKeys(action) {
         var bindSelectionNumberKey = function (index) {
-            interceptKeydownEvent(index + 47);
+            interceptKeydownEvent(parseInt(index) + 47);
             bindKeys(index, function () {
                 var text = highlights.text() + index;
                 var elements = highlights.elements();
