@@ -67,7 +67,7 @@
             highlightElements();
         };
 
-        this.removeLastCharacter = function () {
+        this.deleteLastCharacter = function () {
             text = text.substring(0, text.length - 1);
             highlightElements();
         };
@@ -80,7 +80,7 @@
             return JkDom.hasLink(element) && JkDom.elementInViewport(element) && JkDom.isVisible(element);
         };
         var elements = document.getElementsByTagName("a"),
-            highlightable = {};
+            highlightable = {},
             number = 1;
         for (var i = 0; i < elements.length; i++) {
             if (shouldHighlight(elements[i])) {
@@ -97,29 +97,15 @@
                 highlights.addCharacter(index);
             });
         };
-        bindKeys("esc", function () {
-            reset();
-        });
         bindKeys("return", function () {
             var selected = highlights.selectedElement();
             if (selected) {
                 action(selected.href);
             }
         });
-        bindKeys("d", function () {
-            highlights.removeLastCharacter();
-        });
         for (var i = 0; i < 10; i++) {
             bindSelectionNumberKey(i.toString());
         }
-    }
-
-    function reset() {
-        if (highlights != null) {
-            highlights.reset();
-            highlights = null;
-        }
-        initHooks();
     }
 
     function interceptKeydownEvent(index) {
@@ -152,6 +138,20 @@
                 reset();
             });
         });
+    }
+
+    function reset() {
+        if (highlights != null) {
+            highlights.reset();
+            highlights = null;
+        }
+        initHooks();
+    }
+
+    function deleteLastCharacter() {
+        if (highlights != null) {
+            highlights.deleteLastCharacter();
+        }
     }
 
     //
