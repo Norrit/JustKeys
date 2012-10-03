@@ -8,7 +8,7 @@
 
         keybindings: function (request, sender, response) {
             // TODO: Load keybindings from preferences
-            // One place to define action name, keybinding and the name of the
+            // One place to define action name, keybinding, keycode and the name of the
             // function to execute
             var bindings = {followLink: {keys: "f", fn: "initFollowLink", keyCode: 70},
                             gotoLink: {keys: "g", fn: "initGotoLink", keyCode: 71},
@@ -16,12 +16,6 @@
                             delete: {keys: "d", fn: "deleteLastCharacter", keyCode: 68}
             };
             response(bindings);
-        },
-
-        tabs: function (request, sender, response) {
-            // chrome query directly uses the response function to send back
-            // the response
-            tabs.query({currentWindow: true}, response);
         },
 
         follow: function(request, sender, response) {

@@ -1,4 +1,4 @@
-(function (window, JkDom, bindKeys, request) {
+(function (window, JkDom, bindKeys, unbindKeys, request) {
 
     var JK_HIGHLIGHT_CLASS = "jkHighlight";
     var JK_HIGHLIGHT_NUMBER_CLASS = "jkHighlightNumber";
@@ -90,19 +90,22 @@
         return highlightable;
     }
 
-    function bindSelectionKeys(action) {
-        var bindSelectionNumberKey = function (index) {
-            interceptKeydownEvent((parseInt(index) + 48).toString());
-            bindKeys(index, function () {
-                highlights.addCharacter(index);
-            });
-        };
+    function bindSelectionKeys(keys, action) {
+        bindKeys(keys, function () {
+            reset();
+        });
         bindKeys("return", function () {
             var selected = highlights.selectedElement();
             if (selected) {
                 action(selected.href);
             }
         });
+        var bindSelectionNumberKey = function (index) {
+            interceptKeydownEvent((parseInt(index) + 48).toString());
+            bindKeys(index, function () {
+                highlights.addCharacter(index);
+            });
+        };
         for (var i = 0; i < 10; i++) {
             bindSelectionNumberKey(i.toString());
         }
@@ -120,20 +123,18 @@
     //
     // Bound functions
     //
-    function initFollowLink() {
-        reset();
+    function initFollowLink(keybinding) {
         highlights = new Highlight(highlightableElements());
-        bindSelectionKeys(function (href) {
+        bindSelectionKeys(keybinding.keys, function (href) {
             request({action: "follow", url: href}, function (response) {
                 reset();
             });
         });
     }
 
-    function initGotoLink() {
-        reset();
+    function initGotoLink(keybinding) {
         highlights = new Highlight(highlightableElements());
-        bindSelectionKeys(function (href) {
+        bindSelectionKeys(keybinding.keys, function (href) {
             request({action: "goto", url: href}, function (response) {
                 reset();
             });
@@ -165,7 +166,9 @@
                 // input is evaluated. Somehow invoking the functions by scope
                 // doesn't work.
                 console.log("Register Binding:", keybinding);
-                bindKeys(keybinding.keys, eval(keybinding.fn));
+                bindKeys(keybinding.keys, function (e) {
+                    ((eval(keybinding.fn)(keybinding, e)))
+                });
                 // Intercept keydown events of bound keys to prevent Google Insta Search
                 interceptKeydownEvent(keybinding.keyCode)
             })
@@ -174,4 +177,4 @@
 
     initHooks();
 
-})(window, window.JkDom, Mousetrap.bind, chrome.extension.sendRequest);
+})(window, window.JkDom, Mousetrap.bind, Mousetrap.unbind, chrome.extension.sendRequest);

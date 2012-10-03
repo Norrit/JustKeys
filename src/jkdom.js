@@ -4,7 +4,7 @@
     // Don't want to inject a "big" library into the site.
     //
 
-    // Collection functions each, map, reduce, filter taken from underscore.js
+    // Collection functions each, map, reduce, filter and any taken from underscore.js
     // https://github.com/documentcloud/underscore/blob/master/underscore.js
     var breaker = {},
         nativeForEach = Array.prototype.forEach,
