@@ -4,7 +4,7 @@ JustKeys is a plugin that lets you use Chrome without a mouse.
 
 Installation
 -----------------------
-Clone the project and open the "src" folder in the Chrome Plugin Manager.
+Clone the project and open the `src` folder in the Chrome Plugin Manager.
 
 How to use
 ---------------------
@@ -48,7 +48,7 @@ Note
 ---------------------
 If you like mockster, consider endorsing me at [coderwall](http://coderwall.com/bertschneider):
 
-![endorse](http://api.coderwall.com/bertschneider/endorsecount.png)](http://coderwall.com/bertschneider)
+![endorse](http://api.coderwall.com/bertschneider/endorsecount.png)]
 
 License
 ---------------------
