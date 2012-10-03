@@ -1,12 +1,10 @@
 JustKeys
 =====================
-
 JustKeys is a plugin that lets you use Chrome without a mouse.
 
 Installation
 -----------------------
 Clone the project and open the "src" folder in the Chrome Plugin Manager.
-
 
 How to use
 ---------------------
@@ -31,11 +29,9 @@ or the first key again.
 
 Screenshots
 ---------------------
-
 Before Selection
 ===
 ![Before selection](https://github.com/Norrit/JustKeys/raw/master/img1.png)
-
 During Selection
 ===
 ![During selection](https://github.com/Norrit/JustKeys/raw/master/img2.png)
@@ -51,7 +47,7 @@ Note
 ---------------------
 If you like mockster, consider endorsing me at [coderwall](http://coderwall.com/bertschneider):
 
-[![endorse](http://api.coderwall.com/bertschneider/endorsecount.png)](http://coderwall.com/bertschneider)
+![endorse](http://api.coderwall.com/bertschneider/endorsecount.png)](http://coderwall.com/bertschneider)
 
 License
 ---------------------
