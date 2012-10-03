@@ -30,8 +30,11 @@ or the first key again.
 Screenshots
 ---------------------
 * Before Selection
+
 ![Before selection](https://github.com/Norrit/JustKeys/raw/master/img1.png)
+
 * During Selection
+
 ![During selection](https://github.com/Norrit/JustKeys/raw/master/img2.png)
 
 Todo
