@@ -18,7 +18,7 @@
         var selected, filtered, highlighted, text = "", self = this;
 
         var elements = map(nodes, function (node, index) {
-            return {index: index, node: node};
+            return {index: index + 1, node: node};
         });
 
         var highlightElements = function () {
@@ -79,15 +79,10 @@
         var shouldHighlight = function (element) {
             return JkDom.hasLink(element) && JkDom.elementInViewport(element) && JkDom.isVisible(element);
         };
-        var elements = document.getElementsByTagName("a"),
-            highlightable = {},
-            number = 1;
-        for (var i = 0; i < elements.length; i++) {
-            if (shouldHighlight(elements[i])) {
-                highlightable[number++] = elements[i];
-            }
-        }
-        return highlightable;
+        var elements = document.getElementsByTagName("a");
+        return filter(elements, function(element) {
+            return shouldHighlight(element);
+        });
     }
 
     function bindSelectionKeys(keys, action) {
