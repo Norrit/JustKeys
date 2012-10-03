@@ -48,7 +48,7 @@ Note
 ---------------------
 If you like mockster, consider endorsing me at [coderwall](http://coderwall.com/bertschneider):
 
-![endorse](http://api.coderwall.com/bertschneider/endorsecount.png)]
+![endorse](http://api.coderwall.com/bertschneider/endorsecount.png)
 
 License
 ---------------------
