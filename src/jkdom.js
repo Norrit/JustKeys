@@ -1,4 +1,5 @@
-window.JkDom = (function (window) {
+window.jk = window.jk || {};
+window.jk.dom = (function (window) {
     //
     // Helper and DOM Functions.
     // Don't want to inject a "big" library into the site.
