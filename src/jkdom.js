@@ -152,6 +152,7 @@ window.jk.dom = (function (window) {
     //Expose the DOM functions
     return {
         addClass: addClass,
+        hasClass: hasClass,
         insertAsFirst: insertAsFirst,
         removeClassesFromAllElements: removeClassesFromAllElements,
         removeElementsWithClasses: removeElementsWithClasses,

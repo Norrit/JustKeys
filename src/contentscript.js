@@ -7,8 +7,22 @@
             return jk.hasLink(element) && jk.elementInViewport(element) && jk.isVisible(element);
         };
         var elements = document.getElementsByTagName("a");
-        return jk.filter(elements, function (element) {
+        var visible = jk.filter(elements, function (element) {
             return shouldHighlight(element);
+        });
+        var filtered = visible;
+
+        request({action: "filter"}, function (filter) {
+            jk.each(filter, function(fi) {
+                if (new RegExp(fi.urlRegex).test(window.location.href)) {
+                    filtered = jk.filter(filtered, function (element) {
+                        return !jk.any(fi.classes, function(clazz) {
+                            return jk.hasClass(element, clazz);
+                        })
+                    });
+                }
+            });
+            highlights = new Highlight(filtered);
         });
     }
 
@@ -46,7 +60,7 @@
     // Bound functions
     //
     function initFollowLink(keybinding) {
-        highlights = new Highlight(highlightableElements());
+        highlightableElements();
         bindSelectionKeys(keybinding.keys, function (href) {
             request({action: "follow", url: href}, function (response) {
                 reset();
@@ -55,7 +69,7 @@
     }
 
     function initGotoLink(keybinding) {
-        highlights = new Highlight(highlightableElements());
+        highlightableElements();
         bindSelectionKeys(keybinding.keys, function (href) {
             request({action: "goto", url: href}, function (response) {
                 reset();

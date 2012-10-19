@@ -66,6 +66,10 @@ window.jk.highlight = (function (jk) {
             highlightElements();
         };
 
+        this.update = function() {
+            highlightElements();
+        };
+
         highlightElements();
     }
 

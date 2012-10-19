@@ -9,24 +9,35 @@ window.JustKeys = (function (tabs) {
             // TODO: Load keybindings from preferences
             // One place to define action name, keybinding, keycode and the name of the
             // function to execute
-            var bindings = {followLink: {keys: "f", fn: "initFollowLink", keyCode: 70},
-                            gotoLink: {keys: "g", fn: "initGotoLink", keyCode: 71},
-                            esc: {keys: "esc", fn: "reset", keyCode: null},
-                            delete: {keys: "d", fn: "deleteLastCharacter", keyCode: 68}
+            var bindings = {
+                followLink: {keys: "f", fn: "initFollowLink", keyCode: 70},
+                gotoLink: {keys: "g", fn: "initGotoLink", keyCode: 71},
+                esc: {keys: "esc", fn: "reset", keyCode: null},
+                delete: {keys: "d", fn: "deleteLastCharacter", keyCode: 68}
             };
             response(bindings);
         },
 
-        follow: function(request, sender, response) {
+        follow: function (request, sender, response) {
             tabs.update({url: request.url}, response);
         },
 
-        goto: function(request, sender, response) {
+        goto: function (request, sender, response) {
             tabs.create({url: request.url}, response);
+        },
+
+        filter: function (request, sender, response) {
+            var filter = [
+                {
+                    urlRegex: ".*google.*",
+                    classes: ["kl", "kls", "lcos", "fl", "gbqla", "gbt", "gbzt", "gbgt", "ab_button", "q", "qs"]
+                }
+            ];
+            response(filter);
         }
     };
 
-   return {
+    return {
         /**
          * Dispatches the received message from the `JustKeys` frontend.
          * The messages should have the following type:
