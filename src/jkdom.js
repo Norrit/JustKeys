@@ -1,4 +1,4 @@
-(function (window) {
+window.JkDom = (function (window) {
     //
     // Helper and DOM Functions.
     // Don't want to inject a "big" library into the site.
@@ -149,7 +149,7 @@
     }
 
     //Expose the DOM functions
-    window.JkDom = {
+    return {
         addClass: addClass,
         insertAsFirst: insertAsFirst,
         removeClassesFromAllElements: removeClassesFromAllElements,
@@ -164,5 +164,4 @@
         any: any,
         firstInArray: firstInArray
     };
-
 })(window);

@@ -1,11 +1,10 @@
-(function (window, tabs) {
+window.JustKeys = (function (tabs) {
 
     //
     // Actions.
     // All actions defined here can be invoked by the frontend.
     //
     var actions = {
-
         keybindings: function (request, sender, response) {
             // TODO: Load keybindings from preferences
             // One place to define action name, keybinding, keycode and the name of the
@@ -27,9 +26,7 @@
         }
     };
 
-    // Expose `JustKeys` to the global object
-    window.JustKeys = {
-
+   return {
         /**
          * Dispatches the received message from the `JustKeys` frontend.
          * The messages should have the following type:
@@ -43,7 +40,7 @@
         }
     };
 
-})(window, chrome.tabs);
+})(chrome.tabs);
 
 /**
  * Message Handling Setup
