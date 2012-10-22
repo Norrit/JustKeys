@@ -149,7 +149,6 @@ window.jk.dom = (function (window) {
         return element.href && element.href !== "" && element.href !== "#";
     }
 
-    //Expose the DOM functions
     return {
         addClass: addClass,
         hasClass: hasClass,

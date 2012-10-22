@@ -1,6 +1,6 @@
 (function (window, jk, Highlight, bindKeys, unbindKeys, request) {
 
-     var highlights;
+    var highlights;
 
     function highlightableElements() {
         var shouldHighlight = function (element) {
@@ -10,13 +10,12 @@
         var visible = jk.filter(elements, function (element) {
             return shouldHighlight(element);
         });
-        var filtered = visible;
-
         request({action: "filter"}, function (filter) {
-            jk.each(filter, function(fi) {
+            var filtered = visible;
+            jk.each(filter, function (fi) {
                 if (new RegExp(fi.urlRegex).test(window.location.href)) {
                     filtered = jk.filter(filtered, function (element) {
-                        return !jk.any(fi.classes, function(clazz) {
+                        return !jk.any(fi.classes, function (clazz) {
                             return jk.hasClass(element, clazz);
                         })
                     });

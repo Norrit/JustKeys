@@ -30,7 +30,7 @@ window.JustKeys = (function (tabs) {
             var filter = [
                 {
                     urlRegex: ".*google.*",
-                    classes: ["kl", "kls", "lcos", "fl", "gbqla", "gbt", "gbzt", "gbgt", "ab_button", "q", "qs"]
+                    classes: ["kl", "kls", "lcos", "fl", "gbqla", "gbt", "gbzt", "gbgt", "ab_button", "q", "qs", "gbmt", "ab_dropdownchecklist", "ab_dropdownlnk", "pplsrsl"]
                 }
             ];
             response(filter);
