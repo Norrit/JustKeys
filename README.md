@@ -17,14 +17,15 @@ selection and execute the action. To abort the selection press `esc`
 or the first key again.
 
 ```
-|-------+------------------+------------------------------------------------|
-| Key   | Function         | Description                                    |
-|-------+------------------+------------------------------------------------|
-| f     | Follow Link      | Open the selected link in the current tab      |
-| g     | Goto Link        | Open the selected link in a new tab            |
-| d     | Delete Character | Delete the last insert number in the selection |
-| esc   | Reset            | Abort the link selection                       |
-|-------+------------------+------------------------------------------------|
+|---------+-------------------------+------------------------------------------------|
+| Key     | Function                | Description                                    |
+|---------+-------------------------+------------------------------------------------|
+| f       | Follow Link             | Open the selected link in the current tab      |
+| g       | Goto Link               | Open the selected link in a new tab            |
+| shift+g | Goto Link In Background | Opens the selected link in a newbackground tab |
+| d       | Delete Character        | Delete the last insert number in the selection |
+| esc     | Reset                   | Abort the link selection                       |
+|---------+-------------------------+------------------------------------------------|
 ```
 
 Screenshots

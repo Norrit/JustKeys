@@ -70,7 +70,16 @@
     function initGotoLink(keybinding) {
         highlightableElements();
         bindSelectionKeys(keybinding.keys, function (href) {
-            request({action: "goto", url: href}, function (response) {
+            request({action: "goto", url: href, active: true}, function (response) {
+                reset();
+            });
+        });
+    }
+
+    function initGotoLinkInBackground(keybinding) {
+        highlightableElements();
+        bindSelectionKeys(keybinding.keys, function (href) {
+            request({action: "goto", url: href, active: false}, function (response) {
                 reset();
             });
         });

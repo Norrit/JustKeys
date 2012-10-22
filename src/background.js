@@ -12,6 +12,7 @@ window.JustKeys = (function (tabs) {
             var bindings = {
                 followLink: {keys: "f", fn: "initFollowLink", keyCode: 70},
                 gotoLink: {keys: "g", fn: "initGotoLink", keyCode: 71},
+                gotoLinkInBackground: {keys: "G", fn: "initGotoLinkInBackground", keyCode: 71},
                 esc: {keys: "esc", fn: "reset", keyCode: null},
                 delete: {keys: "d", fn: "deleteLastCharacter", keyCode: 68}
             };
@@ -23,7 +24,7 @@ window.JustKeys = (function (tabs) {
         },
 
         goto: function (request, sender, response) {
-            tabs.create({url: request.url}, response);
+            tabs.create({url: request.url, active: request.active}, response);
         },
 
         filter: function (request, sender, response) {
