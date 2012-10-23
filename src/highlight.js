@@ -11,13 +11,13 @@ window.jk.highlight = (function (jk) {
     function Highlight(nodes) {
         var selected, filtered, highlighted, text = "", self = this;
 
-        var elements = jk.map(nodes, function (node, index) {
+        var elements = nodes.map(function (node, index) {
             return {index: index + 1, node: node};
         });
 
         var highlightElements = function () {
             function highlightElements(elements, highlightClass, numberClass) {
-                jk.each(elements, function (element) {
+                elements.forEach(function (element) {
                     var label = document.createElement("span");
                     label.innerText = element.index;
                     jk.addClass(label, numberClass);
@@ -25,19 +25,22 @@ window.jk.highlight = (function (jk) {
                     jk.insertAsFirst(element.node, label);
                 });
             }
-
-            selected = jk.firstInArray(jk.filter(elements, function (node) {
+            function isIndexTheText(node) {
                 return text != "" && node.index.toString().indexOf(text) === 0;
-            }));
+            }
+            function isNotSelected(node) {
+                return selected.length > 0 ? node.index !== selected[0].index : true;
+            }
 
-            filtered = jk.filter(elements, function (node) {
-                return text != "" && node.index.toString().indexOf(text) === 0 &&
-                    (selected.length > 0 ? node.index !== selected[0].index : true);
+            selected = jk.firstInArray(elements.filter(isIndexTheText));
+
+            filtered = elements.filter(function (node) {
+                return isIndexTheText(node) && isNotSelected(node);
             });
 
-            highlighted = jk.filter(elements, function (node) {
-                return (selected.length > 0 ? node.index !== selected[0].index : true) &&
-                    !jk.any(filtered, function (fil) {
+            highlighted = elements.filter(function (node) {
+                return isNotSelected(node) &&
+                    !filtered.some(function (fil) {
                         return fil.index == node.index;
                     });
             });

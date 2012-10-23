@@ -6,18 +6,16 @@
         var shouldHighlight = function (element) {
             return jk.hasLink(element) && jk.elementInViewport(element) && jk.isVisible(element);
         };
-        var elements = document.getElementsByTagName("a");
-        var visible = jk.filter(elements, function (element) {
-            return shouldHighlight(element);
-        });
+        var elements = jk.nodeListToArray(document.getElementsByTagName("a"));
+        var visible = elements.filter(shouldHighlight);
         request({action: "filter"}, function (filter) {
             var filtered = visible;
             jk.each(filter, function (fi) {
                 if (new RegExp(fi.urlRegex).test(window.location.href)) {
-                    filtered = jk.filter(filtered, function (element) {
-                        return !jk.any(fi.classes, function (clazz) {
+                    filtered = filtered.filter(function(element) {
+                        return !fi.classes.some(function(clazz) {
                             return jk.hasClass(element, clazz);
-                        })
+                        });
                     });
                 }
             });

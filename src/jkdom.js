@@ -1,97 +1,28 @@
 window.jk = window.jk || {};
 window.jk.dom = (function (window) {
+
     //
     // Helper and DOM Functions.
     // Don't want to inject a "big" library into the site.
     //
 
-    // Collection functions each, map, reduce, filter and any taken from underscore.js
-    // https://github.com/documentcloud/underscore/blob/master/underscore.js
-    var breaker = {},
-        nativeForEach = Array.prototype.forEach,
-        nativeMap = Array.prototype.map,
-        nativeReduce = Array.prototype.reduce,
-        nativeFilter = Array.prototype.filter,
-        nativeSome = Array.prototype.some;
-
     function each(obj, iterator, context) {
+        var breaker = {};
         if (obj == null) return;
-        if (nativeForEach && obj.forEach === nativeForEach) {
-            obj.forEach(iterator, context);
-        } else if (obj.length === +obj.length) {
-            for (var i = 0, l = obj.length; i < l; i++) {
-                if (iterator.call(context, obj[i], i, obj) === breaker) return;
-            }
-        } else {
-            for (var key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                    if (iterator.call(context, obj[key], key, obj) === breaker) return;
-                }
+        for (var key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                if (iterator.call(context, obj[key], key, obj) === breaker) return;
             }
         }
     }
 
-    function map(obj, iterator, context) {
-        var results = [];
-        if (obj == null) return results;
-        if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
-        each(obj, function (value, index, list) {
-            results[index] = iterator.call(context, value, index, list);
-        });
-        return results;
-    }
-
-    function reduce(obj, iterator, memo, context) {
-        var initial = arguments.length > 2;
-        if (obj == null) obj = [];
-        if (nativeReduce && obj.reduce === nativeReduce) {
-            if (context) iterator = bind(iterator, context);
-            return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
-        }
-        each(obj, function (value, index, list) {
-            if (!initial) {
-                memo = value;
-                initial = true;
-            } else {
-                memo = iterator.call(context, memo, value, index, list);
-            }
-        });
-        if (!initial) throw new TypeError('Reduce of empty array with no initial value');
-        return memo;
-    }
-
-    function filter(obj, iterator, context) {
-        var results = [];
-        if (obj == null) return results;
-        if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
-        each(obj, function (value, index, list) {
-            if (iterator.call(context, value, index, list)) results[results.length] = value;
-        });
-        return results;
-    }
-
-    function any(obj, iterator, context) {
-        iterator || (iterator = _.identity);
-        var result = false;
-        if (obj == null) return result;
-        if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
-        each(obj, function (value, index, list) {
-            if (result || (result = iterator.call(context, value, index, list))) return breaker;
-        });
-        return !!result;
-    }
-
-    function firstInArray(array) {
+    function headInArray(array) {
         return array.length > 0 ? [array[0]] : [];
     }
 
     function addClass(element, className) {
         if (!hasClass(element, className)) {
-            if (element.className) {
-                element.className += " " + className;
-            } else {
-                element.className = className;
-            }
+            element.className = element.className ? element.className + " " + className : element.className = className;
         }
     }
 
@@ -113,8 +44,7 @@ window.jk.dom = (function (window) {
 
     function isVisible(element) {
         if (element && element.tagName.toLowerCase() !== "body") {
-            return element.style.display !== "none" &&
-                isVisible(element.parentNode);
+            return element.style.display !== "none" && isVisible(element.parentNode);
         }
         return true;
     }
@@ -149,6 +79,13 @@ window.jk.dom = (function (window) {
         return element.href && element.href !== "" && element.href !== "#";
     }
 
+    function nodeListToArray(tags) {
+        var elements = [],
+            length = tags.length;
+        for (var i = length; i--; elements.unshift(tags[i]));
+        return elements;
+    }
+
     return {
         addClass: addClass,
         hasClass: hasClass,
@@ -159,10 +96,7 @@ window.jk.dom = (function (window) {
         elementInViewport: elementInViewport,
         isVisible: isVisible,
         each: each,
-        map: map,
-        reduce: reduce,
-        filter: filter,
-        any: any,
-        firstInArray: firstInArray
+        firstInArray: headInArray,
+        nodeListToArray: nodeListToArray
     };
 })(window);
