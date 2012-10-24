@@ -1,5 +1,5 @@
 window.JustKeys = (function (tabs) {
-
+    "use strict";
     //
     // Actions.
     // All actions defined here can be invoked by the frontend.
@@ -14,7 +14,7 @@ window.JustKeys = (function (tabs) {
                 gotoLink: {keys: "g", fn: "initGotoLink", keyCode: 71},
                 gotoLinkInBackground: {keys: "G", fn: "initGotoLinkInBackground", keyCode: 71},
                 esc: {keys: "esc", fn: "reset", keyCode: null},
-                delete: {keys: "d", fn: "deleteLastCharacter", keyCode: 68}
+                remove: {keys: "d", fn: "removeLastCharacter", keyCode: 68}
             };
             response(bindings);
         },
@@ -52,7 +52,7 @@ window.JustKeys = (function (tabs) {
         }
     };
 
-})(chrome.tabs);
+}(chrome.tabs));
 
 /**
  * Message Handling Setup

@@ -1,17 +1,20 @@
 window.jk = window.jk || {};
 window.jk.dom = (function (window) {
-
+    "use strict";
     //
     // Helper and DOM Functions.
     // Don't want to inject a "big" library into the site.
     //
 
     function each(obj, iterator, context) {
-        var breaker = {};
-        if (obj == null) return;
-        for (var key in obj) {
-            if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                if (iterator.call(context, obj[key], key, obj) === breaker) return;
+        var key, breaker = {};
+        if (obj !== null) {
+            for (key in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                    if (iterator.call(context, obj[key], key, obj) === breaker) {
+                        return;
+                    }
+                }
             }
         }
     }
@@ -72,7 +75,7 @@ window.jk.dom = (function (window) {
             while (elements.length > 0) {
                 elements[0].parentNode.removeChild(elements[0]);
             }
-        })
+        });
     }
 
     function hasLink(element) {
@@ -81,8 +84,9 @@ window.jk.dom = (function (window) {
 
     function nodeListToArray(tags) {
         var elements = [],
-            length = tags.length;
-        for (var i = length; i--; elements.unshift(tags[i]));
+            length = tags.length,
+            i;
+        for (i = length; i--; elements.unshift(tags[i]));
         return elements;
     }
 

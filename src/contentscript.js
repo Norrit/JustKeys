@@ -1,19 +1,20 @@
 (function (window, jk, Highlight, bindKeys, unbindKeys, request) {
+    "use strict";
 
     var highlights;
 
     function highlightableElements() {
-        var shouldHighlight = function (element) {
+        function shouldHighlight(element) {
             return jk.hasLink(element) && jk.elementInViewport(element) && jk.isVisible(element);
-        };
-        var elements = jk.nodeListToArray(document.getElementsByTagName("a"));
-        var visible = elements.filter(shouldHighlight);
+        }
+        var elements = jk.nodeListToArray(document.getElementsByTagName("a")),
+            visible = elements.filter(shouldHighlight);
         request({action: "filter"}, function (filter) {
             var filtered = visible;
             jk.each(filter, function (fi) {
                 if (new RegExp(fi.urlRegex).test(window.location.href)) {
-                    filtered = filtered.filter(function(element) {
-                        return !fi.classes.some(function(clazz) {
+                    filtered = filtered.filter(function (element) {
+                        return !fi.classes.some(function (clazz) {
                             return jk.hasClass(element, clazz);
                         });
                     });
@@ -23,7 +24,22 @@
         });
     }
 
+    function interceptKeydownEvent(index) {
+        var listener = function (e) {
+            if (e.keyCode === index) {
+                e.stopPropagation();
+            }
+        };
+        window.addEventListener('keydown', listener, true);
+    }
+
     function bindSelectionKeys(keys, action) {
+        function bindSelectionNumberKey(index) {
+            interceptKeydownEvent(index + 48);
+            bindKeys(index.toString(), function () {
+                highlights.addCharacter(index);
+            });
+        }
         bindKeys(keys, function () {
             reset();
         });
@@ -33,24 +49,9 @@
                 action(selected.href);
             }
         });
-        var bindSelectionNumberKey = function (index) {
-            interceptKeydownEvent((parseInt(index) + 48).toString());
-            bindKeys(index, function () {
-                highlights.addCharacter(index);
-            });
-        };
-        for (var i = 0; i < 10; i++) {
-            bindSelectionNumberKey(i.toString());
+        for (var i = 0; i < 10; i += 1) {
+            bindSelectionNumberKey(i);
         }
-    }
-
-    function interceptKeydownEvent(index) {
-        var listener = function (e) {
-            if (e.keyCode == index) {
-                e.stopPropagation();
-            }
-        };
-        window.addEventListener('keydown', listener, true);
     }
 
     //
@@ -84,16 +85,16 @@
     }
 
     function reset() {
-        if (highlights != null) {
+        if (highlights !== null) {
             highlights.reset();
             highlights = null;
         }
         initHooks();
     }
 
-    function deleteLastCharacter() {
-        if (highlights != null) {
-            highlights.deleteLastCharacter();
+    function removeLastCharacter() {
+        if (highlights !== null) {
+            highlights.removeLastCharacter();
         }
     }
 
@@ -109,15 +110,15 @@
                 // doesn't work.
                 console.log("Register Binding:", keybinding);
                 bindKeys(keybinding.keys, function (e) {
-                    ((eval(keybinding.fn)(keybinding, e)))
+                    eval(keybinding.fn)(keybinding, e);
                 });
                 // Intercept keydown events of bound keys to prevent intermediate events.
                 // For example Google Insta Search would break the link selection
                 interceptKeydownEvent(keybinding.keyCode)
-            })
+            });
         });
     }
 
     initHooks();
 
-})(window, jk.dom, jk.highlight.Highlight, Mousetrap.bind, Mousetrap.unbind, chrome.extension.sendRequest);
+}(window, jk.dom, jk.highlight.Highlight, Mousetrap.bind, Mousetrap.unbind, chrome.extension.sendRequest));
