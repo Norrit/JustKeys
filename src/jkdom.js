@@ -6,26 +6,9 @@ window.jk.dom = (function (window) {
     // Don't want to inject a "big" library into the site.
     //
 
-    function each(obj, iterator, context) {
-        var key, breaker = {};
-        if (obj !== null) {
-            for (key in obj) {
-                if (Object.prototype.hasOwnProperty.call(obj, key)) {
-                    if (iterator.call(context, obj[key], key, obj) === breaker) {
-                        return;
-                    }
-                }
-            }
-        }
-    }
-
-    function headInArray(array) {
-        return array.length > 0 ? [array[0]] : [];
-    }
-
     function addClass(element, className) {
         if (!hasClass(element, className)) {
-            element.className = element.className ? element.className + " " + className : element.className = className;
+            element.className = element.className ? element.className + " " + className : className;
         }
     }
 
@@ -61,33 +44,25 @@ window.jk.dom = (function (window) {
     }
 
     function removeClassesFromAllElements(classNames) {
-        each(classNames, function (className) {
+        classNames.forEach(function (className) {
             var elements = document.getElementsByClassName(className);
-            while (elements.length > 0) {
+            while (elements.length) {
                 elements[0].classList.remove(className);
             }
         });
     }
 
     function removeElementsWithClasses(classNames) {
-        each(classNames, function (className) {
+        classNames.forEach(function (className) {
             var elements = document.getElementsByClassName(className);
-            while (elements.length > 0) {
+            while (elements.length) {
                 elements[0].parentNode.removeChild(elements[0]);
             }
         });
     }
 
     function hasLink(element) {
-        return element.href && element.href !== "" && element.href !== "#";
-    }
-
-    function nodeListToArray(tags) {
-        var elements = [],
-            length = tags.length,
-            i;
-        for (i = length; i--; elements.unshift(tags[i]));
-        return elements;
+        return element.href && element.href !== "#";
     }
 
     return {
@@ -98,9 +73,6 @@ window.jk.dom = (function (window) {
         removeElementsWithClasses: removeElementsWithClasses,
         hasLink: hasLink,
         elementInViewport: elementInViewport,
-        isVisible: isVisible,
-        each: each,
-        firstInArray: headInArray,
-        nodeListToArray: nodeListToArray
+        isVisible: isVisible
     };
-})(window);
+}(window));

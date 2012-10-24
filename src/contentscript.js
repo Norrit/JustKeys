@@ -7,19 +7,30 @@
         function shouldHighlight(element) {
             return jk.hasLink(element) && jk.elementInViewport(element) && jk.isVisible(element);
         }
-        var elements = jk.nodeListToArray(document.getElementsByTagName("a")),
+
+        function nodeListToArray(tags) {
+            var elements = [],
+                length = tags.length,
+                i;
+            for (i = length; i--; elements.unshift(tags[i]));
+            return elements;
+        }
+
+        var elements = nodeListToArray(document.getElementsByTagName("a")),
             visible = elements.filter(shouldHighlight);
         request({action: "filter"}, function (filter) {
+            // TODO: Extract this block into own filter module/class
             var filtered = visible;
-            jk.each(filter, function (fi) {
-                if (new RegExp(fi.urlRegex).test(window.location.href)) {
+            Object.keys(filter).forEach(function (key) {
+                var site = this[key];
+                if (new RegExp(site.urlRegex).test(window.location.href)) {
                     filtered = filtered.filter(function (element) {
-                        return !fi.classes.some(function (clazz) {
+                        return !site.classes.some(function (clazz) {
                             return jk.hasClass(element, clazz);
                         });
                     });
                 }
-            });
+            }.bind(filter));
             highlights = new Highlight(filtered);
         });
     }
@@ -85,7 +96,7 @@
     }
 
     function reset() {
-        if (highlights !== null) {
+        if (highlights) {
             highlights.reset();
             highlights = null;
         }
@@ -93,7 +104,7 @@
     }
 
     function removeLastCharacter() {
-        if (highlights !== null) {
+        if (highlights) {
             highlights.removeLastCharacter();
         }
     }
@@ -104,7 +115,8 @@
     //
     function initHooks() {
         request({action: 'keybindings'}, function (keybindings) {
-            jk.each(keybindings, function (keybinding) {
+            Object.keys(keybindings).forEach(function (key) {
+                var keybinding = this[key];
                 // eval is dangerous ... but should be fine here because no user
                 // input is evaluated. Somehow invoking the functions by scope
                 // doesn't work.
@@ -115,7 +127,7 @@
                 // Intercept keydown events of bound keys to prevent intermediate events.
                 // For example Google Insta Search would break the link selection
                 interceptKeydownEvent(keybinding.keyCode)
-            });
+            }.bind(keybindings));
         });
     }
 
