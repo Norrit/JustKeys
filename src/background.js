@@ -35,10 +35,19 @@ window.JustKeys = (function (tabs) {
                 }
             ];
             response(filter);
+        },
+
+        echo: function (request, sender, response) {
+            response(request);
         }
     };
 
     return {
+        /**
+         * The available actions.
+         */
+        actions: actions,
+
         /**
          * Dispatches the received message from the `JustKeys` frontend.
          * The messages should have the following type:
