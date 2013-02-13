@@ -47,7 +47,7 @@ Todo
 
 Note
 ---------------------
-If you like mockster, consider endorsing me at [coderwall](http://coderwall.com/bertschneider):
+If you like JustKeys, consider endorsing me at [coderwall](http://coderwall.com/bertschneider):
 
 ![endorse](http://api.coderwall.com/bertschneider/endorsecount.png)
 
