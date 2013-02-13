@@ -1,4 +1,4 @@
-(function (window, jk, Highlight, bindKeys, unbindKeys, request) {
+;(function (window, jk, Highlight, bindKeys, unbindKeys, request) {
     "use strict";
 
     var highlights;
@@ -37,7 +37,10 @@
 
     function interceptKeydownEvent(index) {
         var listener = function (e) {
-            if (e.keyCode === index) {
+            var activeElement = window.document.activeElement;
+            if (activeElement.tagName.toLocaleLowerCase() != "input"
+                && activeElement.tagName.toLocaleLowerCase() != "textarea"
+                && e.keyCode === index) {
                 e.stopPropagation();
             }
         };
